@@ -2,8 +2,8 @@
 const API_URL = import.meta.env.VITE_APP_API_URL
 const validateToken = async () => {
     try {
-      const validateRequest = await fetch(`${API_URL}/auth/token/decode`, {
-        method: 'POST',
+      const validateRequest = await fetch(`${API_URL}/auth/validate`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

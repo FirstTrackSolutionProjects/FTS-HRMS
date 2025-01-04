@@ -6,10 +6,11 @@ import SignIn from "./pages/SignIn"
 import Header from "./components/Header"
 import AboutUs from "./pages/AboutUs"
 import ContactUs from "./pages/ContactUs"
-
+import { ToastContainer } from "react-toastify"
 const App = () => {
   return (
     <>
+    <ToastContainer />
     <Header />
       <Routes>
         <Route path="/" element={<Welcome />} />
