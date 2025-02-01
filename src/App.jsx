@@ -7,6 +7,7 @@ import Header from "./components/Header"
 import AboutUs from "./pages/AboutUs"
 import ContactUs from "./pages/ContactUs"
 import { ToastContainer } from "react-toastify"
+import Footer from "./components/Footer"
 const App = () => {
   return (
     <>
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+    <Footer />
     </>
   )
 }
