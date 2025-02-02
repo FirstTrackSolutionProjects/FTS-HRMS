@@ -64,6 +64,7 @@ const Welcome = () => {
         <title>Home | FTS HRMS</title>
       </Helmet>
       <Box className={`text-center text-white py-8 px-4 h-screen flex flex-col justify-center items-center bg-[url('/employee-management.jpg')] bg-cover bg-center bg-[rgba(0,0,0,0.5)] bg-blend-overlay`}  gap={2}>
+        <Box component={'img'} src="/logo.jpg" alt="" sx={{width:Math.max(100,width/10)}} className="rounded-full" /> 
         <Typography variant="h3" sx={{
           fontSize:Math.min(80,width/15),
           fontWeight: "bold",
