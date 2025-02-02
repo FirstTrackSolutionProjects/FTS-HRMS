@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: 4,
+    padding: 0,
   },
   hero: {
     textAlign: "center",
@@ -24,9 +24,12 @@ const useStyles = makeStyles((theme) => ({
   },
   featureCard: {
     margin: "2px 0px",
+    width: "70%",
+    display: "flex",
   },
   featureImage: {
-    height: 140
+    height: 140,
+    width: 140
   },
   ctaButton: {
     marginTop: 4,
@@ -56,11 +59,11 @@ const Welcome = () => {
   ];
 
   return (
-    <Container className={classes.root}>
+    <Box className={classes.root}>
       <Helmet>
         <title>Home | FTS HRMS</title>
       </Helmet>
-      <Box className={`text-center text-white mb-6 py-8 px-4 h-96 flex flex-col justify-center items-center bg-[url('/employee-management.jpg')] bg-cover bg-center bg-[rgba(0,0,0,0.5)] bg-blend-overlay`}  gap={2}>
+      <Box className={`text-center text-white py-8 px-4 h-screen flex flex-col justify-center items-center bg-[url('/employee-management.jpg')] bg-cover bg-center bg-[rgba(0,0,0,0.5)] bg-blend-overlay`}  gap={2}>
         <Typography variant="h3" sx={{
           fontSize:Math.min(80,width/15),
           fontWeight: "bold",
@@ -83,32 +86,34 @@ const Welcome = () => {
         </Button>
       </Box>
 
-      <Typography variant="h4" gutterBottom>
-        Features
+      <Box className="px-4 py-8 w-full">
+      <Typography variant="h4" sx={{fontWeight: 'bold', fontSize:width<1000?Math.max(24,width/30):36}} className="text-center" gutterBottom>
+        <span className="text-blue-300">OUR</span>{" "} <span className="text-green-300">FEATURES</span>
       </Typography>
-      <Grid container spacing={4}>
+      <Box className="w-full flex flex-col">
         {features.map((feature, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
-            <Card className={classes.featureCard}>
+          <Box className={`w-full flex my-2 ${index%2?'justify-end':''}`}>
+            <Box className={`relative overflow-hidden rounded-lg text-white shadow-lg bg-gradient-to-r from-green-300 to-blue-500 flex flex-col w-[1000px] max-w-[1000px] xs:h-48 ${index%2?'xs:flex-row-reverse justify-between':'xs:flex-row'}`}>
               <CardMedia
                 image={feature.image}
                 title={feature.title}
-                className={classes.featureImage}
+                className={`h-64 xs:h-full w-full xs:w-64 object-cover`}
                 
               />
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
+              <CardContent className="flex flex-col items-start justify-center h-32 xs:h-auto">
+                <Box variant="h6" gutterBottom className="font-bold" sx={{fontSize:width<1000?Math.max(18,width/30):32}}>
                   {feature.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary">
+                </Box>
+                <Typography variant="body2" color="textSecondary" sx={{fontSize:width<1000?Math.max(9,width/60):16}}>
                   {feature.description}
                 </Typography>
               </CardContent>
-            </Card>
-          </Grid>
+            </Box>
+            </Box>
         ))}
-      </Grid>
-    </Container>
+      </Box>
+      </Box>
+    </Box>
   );
 };
 

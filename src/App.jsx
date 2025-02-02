@@ -12,7 +12,7 @@ const App = () => {
   return (
     <>
     <ToastContainer />
-    <Header />
+    {/* <Header /> */}
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/sign-in" element={<SignIn />} />
