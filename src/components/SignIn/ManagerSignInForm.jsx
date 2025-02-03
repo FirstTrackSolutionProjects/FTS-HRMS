@@ -1,12 +1,15 @@
-import { Box, TextField, Button } from '@mui/material'
+import { Box, TextField, Button, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useAuth } from '../../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import { useWidth } from '../../contexts/WidthContext'
 const API_URL = import.meta.env.VITE_APP_API_URL
 
 const ManagerSignInForm = () => {
   const navigate = useNavigate()
+  const {width} = useWidth();
   const { login, isAuthenticated } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
@@ -43,11 +46,15 @@ const ManagerSignInForm = () => {
     setFormData({...formData, [e.target.name]: e.target.value })
   }
   return (
-    <Box className="relative w-full h-full flex flex-col justify-center items-center" gap={2}>
-      <Box className="text-center font-bold text-3xl" mb={2}>
-        Welcome Back Manager
-      </Box>
-      <Box component={'form'} onSubmit={handleSubmit} className='flex flex-col w-[75%]' gap={2}>
+    <Box className="flex flex-col space-y-4 md:space-y-8 h-screen relative p-4 md:p-8">
+    <Typography className={`relative flex items-center justify-center font-bold text-center py-2 px-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg text-white`} sx={{fontSize:Math.max(20,width/30)}}>
+    <Link to={'/'} className='flex items-center'>
+        <KeyboardBackspaceIcon sx={{fontSize:Math.max(25,width/30)}} className="rounded-full border-[2px] md:border-[4px] border-white cursor-pointer absolute left-4" />
+    </Link>
+      Welcome Back Admin
+    </Typography>
+    <Box className="flex h-full rounded-lg relative flex-col md:flex-row justify-center items-center space-x-0 space-y-4 md:space-x-4 md:space-y-0 text-white bg-gradient-to-r from-green-400 to-blue-500 py-4 md:py-8">
+    <Box component={'form'} onSubmit={handleSubmit} className='flex flex-col w-[75%] items-center' gap={2}>
         <TextField
           label="Email"
           value={formData.email}
@@ -56,29 +63,30 @@ const ManagerSignInForm = () => {
           placeholder="john@example.com"
           sx={{
             '& .MuiInputLabel-root': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: 'black', 
+                borderColor: 'white', 
               },
               '&:hover fieldset': {
-                borderColor: 'black',
+                borderColor: 'white',
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'black',
+                borderColor: 'white',
               },
             },
             '& .MuiOutlinedInput-input': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiOutlinedInput-input::placeholder': {
-              color: '#aaaaaa',
+              color: '#ffffff',
               opacity: 1,
             },
+            width: width<768?width*0.75:width/2
           }}
         />
         <TextField
@@ -90,44 +98,46 @@ const ManagerSignInForm = () => {
           type="password"
           sx={{
             '& .MuiInputLabel-root': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiInputLabel-root.Mui-focused': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: 'black', 
+                borderColor: 'white', 
               },
               '&:hover fieldset': {
-                borderColor: 'black',
+                borderColor: 'white',
               },
               '&.Mui-focused fieldset': {
-                borderColor: 'black',
+                borderColor: 'white',
               },
             },
             '& .MuiOutlinedInput-input': {
-              color: 'black',
+              color: 'white',
             },
             '& .MuiOutlinedInput-input::placeholder': {
-              color: '#aaaaaa',
+              color: '#ffffff',
               opacity: 1,
             },
+            width: width<768?width*0.75:width/2
           }}
         />
         <Button
       variant="contained"
       color="white"
-      type='submit'
       sx={{
         backgroundColor: 'white',
-        color:'black'
+        color:'black',
+        width: width<768?width*0.75:width/2
       }}
     >
       Login
     </Button>
       </Box>
     </Box>
+  </Box>
   )
 }
 

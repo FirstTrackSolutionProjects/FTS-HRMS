@@ -2,6 +2,8 @@ import { Box } from "@mui/material"
 import { Helmet } from "react-helmet"
 import WhoAmI from "../components/SignIn/WhoAmI"
 import { Route, Routes } from "react-router-dom"
+import EmployeeSignInForm from "../components/SignIn/EmployeeSignInForm"
+import ManagerSignInForm from "../components/SignIn/ManagerSignInForm"
 
 const SignIn = () => {
   return (
@@ -12,8 +14,8 @@ const SignIn = () => {
     </Helmet>
     <Routes>
       <Route path="/" element={<WhoAmI />} />
-      {/* <Route path="/about-us" element={<AboutUs />} /> */}
-      {/* <Route path="/contact-us" element={<ContactUs />} /> */}
+      <Route path="/employee" element={<EmployeeSignInForm />} />
+      <Route path="/admin" element={<ManagerSignInForm />} />
     </Routes>
     </>
   )
