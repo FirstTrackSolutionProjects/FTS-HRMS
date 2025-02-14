@@ -1,11 +1,21 @@
 import { Box } from "@mui/material"
 import { Helmet } from "react-helmet"
 import WhoAmI from "../components/SignIn/WhoAmI"
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes, useNavigate } from "react-router-dom"
 import EmployeeSignInForm from "../components/SignIn/EmployeeSignInForm"
 import ManagerSignInForm from "../components/SignIn/ManagerSignInForm"
+import { useAuth } from "../contexts/AuthContext"
+import { useEffect } from "react"
 
 const SignIn = () => {
+  const { isAuthenticated, is_manager } = useAuth()
+  const navigate = useNavigate()
+  useEffect(()=>{
+    if(isAuthenticated){
+      if(is_manager) navigate('/admin-dashboard')
+      else navigate('/employee-dashboard')
+    }
+  },[isAuthenticated])
   return (
     <>
     <Helmet>

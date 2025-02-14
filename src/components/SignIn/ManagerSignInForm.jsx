@@ -127,6 +127,7 @@ const ManagerSignInForm = () => {
         <Button
       variant="contained"
       color="white"
+      type='submit'
       sx={{
         backgroundColor: 'white',
         color:'black',

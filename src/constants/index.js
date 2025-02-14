@@ -1,3 +1,18 @@
+import { MdDashboardCustomize } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
+import { TfiAnnouncement } from "react-icons/tfi";
+import { GoPersonFill } from "react-icons/go";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
+import { FaMoneyBill1Wave } from "react-icons/fa6";
+import ManagerDashboardHome from "../components/ManagerDashboard/ManagerDashboardHome/ManagerDashboardHome";
+import ManagerDashboardUsers from "../components/ManagerDashboard/ManagerDashboardUsers/ManagerDashboardUsers";
+import ManagerDashboardAnnouncements from "../components/ManagerDashboard/ManagerDashboardAnnouncements/ManagerDashboardAnnouncements";
+import ManagerDashboardEmployees from "../components/ManagerDashboard/ManagerDashboardEmployees/ManagerDashboardEmployees";
+import ManagerDashboardAttendance from "../components/ManagerDashboard/ManagerDashboardAttendance/ManagerDashboardAttendance";
+import ManagerDashboardLeave from "../components/ManagerDashboard/ManagerDashboardLeave/ManagerDashboardLeave";
+import ManagerDashboardPayroll from "../components/ManagerDashboard/ManagerDashboardPayroll/ManagerDashboardPayroll";
+
 export const PERMISSIONS = Object.freeze({
     CREATE_MANAGER: 'CREATE_MANAGER',
     UPDATE_MANAGER: 'UPDATE_MANAGER',
@@ -34,5 +49,57 @@ export const headerNavItems = Object.freeze([
     {
         label: 'Contact Us',
         to: '/contact-us'
+    }
+])
+
+export const adminSidebarNavItems = Object.freeze([
+    {
+        label: 'Dashboard',
+        to: '/home',
+        icon: MdDashboardCustomize,
+        component: ManagerDashboardHome,
+        permissions: []
+    },
+    {
+        label: 'Users',
+        to: '/users',
+        icon: FaUsers,
+        component: ManagerDashboardUsers,
+        permissions: ['AUDIT_MANAGER']
+    },
+    {
+        label: 'Announcements',
+        to: '/announcements',
+        icon: TfiAnnouncement,
+        component: ManagerDashboardAnnouncements,
+        permissions: ['AUDIT_ANNOUNCEMENT']
+    },
+    {
+        label: 'Employees',
+        to: '/employees',
+        icon: GoPersonFill,
+        component: ManagerDashboardEmployees,
+        permissions: ['AUDIT_EMPLOYEE']
+    },
+    {
+        label: 'Attendance',
+        to: '/attendance',
+        icon: FaRegCalendarAlt,
+        component: ManagerDashboardAttendance,
+        permissions: ['AUDIT_ATTENDANCE']
+    },
+    {
+        label: 'Leaves',
+        to: '/leaves',
+        icon: FaPencilAlt,
+        component: ManagerDashboardLeave,
+        permissions: ['AUDIT_LEAVE']
+    },
+    {
+        label: 'Payroll',
+        to: '/payroll',
+        icon: FaMoneyBill1Wave,
+        component: ManagerDashboardPayroll,
+        permissions: ['AUDIT_PAYROLL']
     }
 ])

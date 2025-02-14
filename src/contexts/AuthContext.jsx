@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setAuthState({isAuthenticated: false});
-    navigate('/login');
+    navigate('/sign-in');
   }
 
   const getPermissions = async () => {
