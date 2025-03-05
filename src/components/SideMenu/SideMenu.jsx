@@ -51,6 +51,7 @@ const SideMenu = () => {
                     <Tooltip
                         id={headerNavItems.label}
                         place="right"
+                        className='z-50'
                         content={headerNavItems.label}
                     />
                 </>

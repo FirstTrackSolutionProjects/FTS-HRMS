@@ -5,6 +5,7 @@ import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaMoneyBill1Wave } from "react-icons/fa6";
+import { RiAdminFill } from "react-icons/ri";
 import ManagerDashboardHome from "../components/ManagerDashboard/ManagerDashboardHome/ManagerDashboardHome";
 import ManagerDashboardUsers from "../components/ManagerDashboard/ManagerDashboardUsers/ManagerDashboardUsers";
 import ManagerDashboardAnnouncements from "../components/ManagerDashboard/ManagerDashboardAnnouncements/ManagerDashboardAnnouncements";
@@ -12,6 +13,7 @@ import ManagerDashboardEmployees from "../components/ManagerDashboard/ManagerDas
 import ManagerDashboardAttendance from "../components/ManagerDashboard/ManagerDashboardAttendance/ManagerDashboardAttendance";
 import ManagerDashboardLeave from "../components/ManagerDashboard/ManagerDashboardLeave/ManagerDashboardLeave";
 import ManagerDashboardPayroll from "../components/ManagerDashboard/ManagerDashboardPayroll/ManagerDashboardPayroll";
+import ManagerDashboardRoles from "../components/ManagerDashboard/ManagerDashboardRoles/ManagerDashboardRoles";
 
 export const PERMISSIONS = Object.freeze({
     CREATE_MANAGER: 'CREATE_MANAGER',
@@ -101,5 +103,12 @@ export const adminSidebarNavItems = Object.freeze([
         icon: FaMoneyBill1Wave,
         component: ManagerDashboardPayroll,
         permissions: ['AUDIT_PAYROLL']
+    },
+    {
+        label: 'Roles',
+        to: '/roles',
+        icon: RiAdminFill,
+        component: ManagerDashboardRoles,
+        permissions: ['AUDIT_ROLE']
     }
 ])
