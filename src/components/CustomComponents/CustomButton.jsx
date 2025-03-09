@@ -1,7 +1,7 @@
 import { Button } from "@mui/material"
-const CustomButton = ({secondary,sx, disabled, title="hello"}) => {
+const CustomButton = ({secondary,sx, disabled, title="hello", onClick}) => {
   return (
-    <Button variant={secondary?'outlined':'contained'} sx={sx} disabled={disabled}>
+    <Button variant={secondary?'outlined':'contained'} sx={sx} disabled={disabled} onClick={onClick}>
       {title}
     </Button>
   )
