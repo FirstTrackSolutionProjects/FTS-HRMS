@@ -4,11 +4,14 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import { WidthProvider } from './contexts/WidthContext.jsx'
+import { HeightProvider } from './contexts/HeightContext.jsx'
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
     <AuthProvider>
       <WidthProvider>
-        <App />
+        <HeightProvider>
+          <App />
+        </HeightProvider>
       </WidthProvider>
     </AuthProvider>
   </BrowserRouter>

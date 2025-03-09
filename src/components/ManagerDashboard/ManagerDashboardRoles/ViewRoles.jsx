@@ -11,13 +11,14 @@ import EditIcon from '../../../icons/EditIcon'
 import PermissionIcon from '../../../icons/PermissionIcon'
 import DeleteIcon from '../../../icons/DeleteIcon'
 import UpdateRole from './UpdateRole'
+import ManagePermissionsPopup from './ManagePermissionsPopup'
+import DeleteRoleConfirmationPopup from './DeleteRoleConfirmPopup'
 const ViewRoles = () => {
     const { width } = useWidth()
     const { permissions } = useAuth()
 
     const allColumns = [
       { field: 'space', headerName: '', width: 1, disableColumnMenu: true, sortable: false},
-      { field: 'role_id', headerName: 'ID', width: 100 },
       { field: 'role_name', headerName: 'Role Name', width: 150 },
       { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
         const [updateRolePopupOpen, setUpdateRolePopupOpen] = useState(false)
@@ -28,14 +29,31 @@ const ViewRoles = () => {
           setUpdateRolePopupOpen(false)
           showAllRoles()
         }
+
+        const [managePermissionsPopupOpen, setManagePermissionsPopupOpen] = useState(false)
+        const handleManagePermissionsPopup = () => {
+          setManagePermissionsPopupOpen((prev)=>!prev)
+        }
+
+        const [deleteRolePopupOpen, setDeleteRolePopupOpen] = useState(false)
+        const handleDeleteRolePopup = () => {
+          setDeleteRolePopupOpen((prev)=>!prev)
+        }
+        const handleDeleteRoleEvent = () => {
+          setUpdateRolePopupOpen(false)
+          showAllRoles()
+        }
+
         return (
         <>
         <Box className="flex flex-1 items-center h-full" gap={2}>
           {permissions.includes(PERMISSIONS.UPDATE_ROLE) && <EditIcon onClick={handleUpdateRolePopup} />}
-          {permissions.includes(PERMISSIONS.UPDATE_ROLE) && <PermissionIcon onClick={()=>alert(1)} />}
-          {permissions.includes(PERMISSIONS.DELETE_ROLE) && <DeleteIcon onClick={()=>alert(1)} />}
+          {permissions.includes(PERMISSIONS.UPDATE_ROLE) && <PermissionIcon onClick={handleManagePermissionsPopup} />}
+          {permissions.includes(PERMISSIONS.DELETE_ROLE) && <DeleteIcon onClick={handleDeleteRolePopup} />}
         </Box>
         <UpdateRole open={updateRolePopupOpen} onClose={handleUpdateRolePopup} onSubmit={handleUpdateRoleEvent} roleId={params?.id}  />
+        <ManagePermissionsPopup open={managePermissionsPopupOpen} onClose={handleManagePermissionsPopup} roleId={params?.id} />
+        <DeleteRoleConfirmationPopup open={deleteRolePopupOpen} onClose={handleDeleteRolePopup} onSubmit={handleDeleteRoleEvent} roleId={params?.id} />
         </>
       )}
       },

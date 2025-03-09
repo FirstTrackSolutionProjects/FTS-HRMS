@@ -22,7 +22,7 @@ const Popup = ({
     //   fullWidth
       PaperProps={{
         sx: {
-          maxHeight: "100%",
+          maxHeight: "90%",
         },
       }}
       maxWidth={maxWidth}
