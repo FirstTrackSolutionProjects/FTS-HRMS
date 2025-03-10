@@ -23,11 +23,11 @@ const ManagerDashboard = () => {
         });
       };
     return (
-        <Box className="w-full h-screen bg-gray-200 overflow-hidden flex">
+        <Box className="w-full h-screen  overflow-hidden flex">
             <Box className="h-screen overflow-hidden w-16 from-blue-700 bg-gradient-to-b to-blue-950">
                 <SideMenu />
             </Box>
-            <Box className={`h-screen w-[calc(100vw-64px)] overflow-y-auto overflow-x-hiddeN`}>
+            <Box className={`h-screen w-[calc(100vw-64px)] overflow-y-auto overflow-x-hidden `}>
                 <Routes>
                     {generateRoutes(adminSidebarNavItems)}
                 </Routes>
