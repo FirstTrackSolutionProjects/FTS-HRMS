@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManagerDashboardLeave = () => {
+const Leave = () => {
   return (
     <div>
       Leave
@@ -8,4 +8,4 @@ const ManagerDashboardLeave = () => {
   )
 }
 
-export default ManagerDashboardLeave
+export default Leave

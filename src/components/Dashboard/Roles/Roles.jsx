@@ -3,7 +3,7 @@ import React from 'react'
 import ViewRoles from './ViewRoles'
 import ComponentTitle from '../../CustomComponents/ComponentTitle'
 
-const ManagerDashboardRoles = () => {
+const Roles = () => {
   return (
     <Stack gap={4}>
       <ComponentTitle title={`Roles`} />
@@ -12,4 +12,4 @@ const ManagerDashboardRoles = () => {
   )
 }
 
-export default ManagerDashboardRoles
+export default Roles

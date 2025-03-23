@@ -8,7 +8,7 @@ import AboutUs from "./pages/AboutUs"
 import ContactUs from "./pages/ContactUs"
 import { ToastContainer } from "react-toastify"
 import Footer from "./components/Footer"
-import ManagerDashboard from "./pages/ManagerDashboard"
+import Dashboard from "./pages/Dashboard"
 const App = () => {
   const location = useLocation()
   return (
@@ -20,7 +20,7 @@ const App = () => {
         <Route path="/sign-in/*" element={<SignIn />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} />
-        <Route path="/admin-dashboard/*" element={<ManagerDashboard />} />
+        <Route path="/dashboard/*" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     {location.pathname == '/'? 

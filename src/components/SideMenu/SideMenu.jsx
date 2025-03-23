@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { adminSidebarNavItems } from '../../constants'
+import { sidebarNavItems } from '../../constants'
 import { Tooltip } from 'react-tooltip'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CgProfile } from "react-icons/cg";
@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const SideMenu = () => {
     const location = useLocation()
     const navigate = useNavigate()
-    const {is_manager, permissions} = useAuth()
+    const {permissions, is_superadmin} = useAuth()
   return (
     <Box className="h-screen w-full flex flex-col space-y-2 items-center" gap={4}>
         <Box component={'img'} className='w-16 h-16 rounded-full p-2' src='/logo.jpg' />
@@ -32,10 +32,8 @@ const SideMenu = () => {
                 },
             }}
         >
-            {adminSidebarNavItems.map((headerNavItems, index)=>{
-                if (
-                    is_manager &&
-                    headerNavItems?.permissions?.length &&
+            {sidebarNavItems.map((headerNavItems, index)=>{
+                if (!is_superadmin && headerNavItems?.permissions?.length &&
                     !headerNavItems.permissions.every(p => permissions.includes(p))
                   ) return;
                 return (
@@ -43,8 +41,8 @@ const SideMenu = () => {
                     <Box 
                         key={index} 
                         data-tooltip-id={headerNavItems.label} 
-                        className={`relative min-w-10 w-10 min-h-10 h-10 flex items-center justify-center text-white text-2xl rounded-lg hover:bg-[rgba(255,255,255,0.4)] ${location.pathname.startsWith('/admin-dashboard'+headerNavItems.to)?'bg-[rgba(255,255,255,0.5)]':'bg-[rgba(255,255,255,0.2)]'} cursor-pointer`}
-                        onClick={()=>navigate('/admin-dashboard'+headerNavItems.to)}
+                        className={`relative min-w-10 w-10 min-h-10 h-10 flex items-center justify-center text-white text-2xl rounded-lg hover:bg-[rgba(255,255,255,0.4)] ${location.pathname.startsWith('/dashboard'+headerNavItems.to)?'bg-[rgba(255,255,255,0.5)]':'bg-[rgba(255,255,255,0.2)]'} cursor-pointer`}
+                        onClick={()=>navigate('/dashboard'+headerNavItems.to)}
                     >
                         <headerNavItems.icon />
                     </Box>

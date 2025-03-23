@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManagerDashboardUsers = () => {
+const Users = () => {
   return (
     <div>
       Users
@@ -8,4 +8,4 @@ const ManagerDashboardUsers = () => {
   )
 }
 
-export default ManagerDashboardUsers
+export default Users

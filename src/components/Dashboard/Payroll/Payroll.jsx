@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManagerDashboardPayroll = () => {
+const Payroll = () => {
   return (
     <div>
       Payroll
@@ -8,4 +8,4 @@ const ManagerDashboardPayroll = () => {
   )
 }
 
-export default ManagerDashboardPayroll
+export default Payroll

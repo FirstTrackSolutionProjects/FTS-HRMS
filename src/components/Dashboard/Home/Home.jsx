@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManagerDashboardHome = () => {
+const Home = () => {
   return (
     <div className='w-full h-screen'>
       Home
@@ -8,4 +8,4 @@ const ManagerDashboardHome = () => {
   )
 }
 
-export default ManagerDashboardHome
+export default Home
