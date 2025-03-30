@@ -8,15 +8,11 @@ const DeleteRoleConfirmationPopup = ({ open, onClose, onSubmit, roleId }) => {
     if (!open) return null;
     const handleSubmit = async () => {
         try {
-            const response = await deleteRoleService(roleId);
-            if (response?.success) {
-                toast.success("Role deleted successfully!");
-                onSubmit();
-            } else {
-                toast.error(response?.message || "Failed to delete role.");
-            }
-        } catch (err) {
-            toast.error("An error occurred while deleting the role.");
+            await deleteRoleService(roleId);
+            toast.success("Role deleted successfully!");
+            onSubmit();
+        } catch (error) {
+            toast.error("Failed to delete role.");
         }
     };
 

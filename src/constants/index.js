@@ -57,10 +57,10 @@ export const sidebarNavItems = Object.freeze([
         permissions: []
     },
     {
-        label: 'Users',
-        to: '/users',
+        label: 'Employees',
+        to: '/employees',
         icon: FaUsers,
-        component: Users,
+        component: Employees,
         permissions: [PERMISSIONS.AUDIT_JOINUS]
     },
     {
@@ -96,6 +96,6 @@ export const sidebarNavItems = Object.freeze([
         to: '/roles',
         icon: RiAdminFill,
         component: Roles,
-        permissions: ['afdfdf']
+        permissions: [PERMISSIONS.AUDIT_ROLE]
     }
 ])

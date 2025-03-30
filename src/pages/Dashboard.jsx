@@ -6,10 +6,10 @@ import { createElement } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 const Dashboard = () => {
-    const { is_superadmin, permissions } = useAuth();
+    const { is_superadmin, checkPermission } = useAuth();
     const generateRoutes = (items) => {
         return items.flatMap((item, index) => {
-            if (!is_superadmin && (item?.permissions?.length && !item.permissions.every(p => permissions.includes(p)))) 
+            if (!is_superadmin && (item?.permissions?.length && !item.permissions.every(p => checkPermission(p)))) 
                 return [];
             const routes = [
             <Route

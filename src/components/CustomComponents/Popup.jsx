@@ -12,6 +12,7 @@ const Popup = ({
   children,
   close,
   title,
+  ref,
   maxWidth="md",
   secondaryColor,
   sx,
@@ -57,7 +58,7 @@ const Popup = ({
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box p={2}>{children}</Box>
+        <Box p={2} className={`overflow-x-hidden overflow-y-auto relative`} ref={ref}>{children}</Box>
       </Box>
     </Dialog>
   );

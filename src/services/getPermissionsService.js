@@ -9,11 +9,21 @@ const getPermissionsService = async () => {
                 'Accept': 'application/json',
             }
         });
-        const data = await response.json();
-        return data;
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error("Something went wrong");
+        }
+
+        if (!data?.success) {
+            throw new Error(data?.message);
+        }
+
+        return data?.data;
     } catch (error) {
-        console.error('Error fetching permissions:', error);
-        throw new Error('Failed to fetch permissions')
+        console.error(error);
+        throw error instanceof Error ? error : new Error("An unexpected error occurred");
     }
 }
 

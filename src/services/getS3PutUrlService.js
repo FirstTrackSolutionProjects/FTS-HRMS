@@ -1,14 +1,15 @@
 const API_URL = import.meta.env.VITE_APP_API_URL
 
-const deleteRoleService = async (id) => {
+const getS3PutUrlService = async (key, filetype) => {
     try {
-        const response = await fetch(`${API_URL}/roles/${id}`, {
-            method: 'DELETE',
+        const response = await fetch(`${API_URL}/s3/put-url`, {
+            method: "POST",
             headers: {
-                'Authorization': localStorage.getItem('token'),
-                'Accept': 'application/json',
-            }
-        });
+              Authorization: localStorage.getItem("token"),
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ filename: key, filetype: filetype }),
+          });
         let data;
         try {
             data = await response.json();
@@ -19,11 +20,12 @@ const deleteRoleService = async (id) => {
         if (!data?.success) {
             throw new Error(data?.message);
         }
-        
+
+        return data?.data;
     } catch (error) {
         console.error(error);
         throw error instanceof Error ? error : new Error("An unexpected error occurred");
     }
 }
 
-export default deleteRoleService;
+export default getS3PutUrlService;

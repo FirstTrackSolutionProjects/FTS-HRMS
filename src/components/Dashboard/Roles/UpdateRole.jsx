@@ -8,16 +8,12 @@ const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
     const [roleName, setRoleName] = useState("")
     const handleSubmit = async () => {
         try {
-            const response = await updateRoleService(roleId, roleName)
-            if(response?.success) {
-                toast.success(response?.message)
-                onSubmit()
-                setRoleName("")
-            } else {
-                toast.error(response?.message)
-            }
+            await updateRoleService(roleId, roleName)
+            toast.success("Role updated successfully")
+            onSubmit()
+            setRoleName("")
         } catch (err) {
-            toast.error(err)
+            toast.error("Failed to update role")
         }
     }
   return (

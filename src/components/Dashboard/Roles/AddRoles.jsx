@@ -8,16 +8,13 @@ const AddRoles = ({open, onClose, onSubmit}) => {
     const [roleName, setRoleName] = useState("")
     const handleSubmit = async () => {
         try {
-            const response = await createRoleService(roleName)
-            if(response?.success) {
-                toast.success(response?.message)
-                onSubmit()
-                setRoleName("")
-            } else {
-                toast.error(response?.message)
-            }
-        } catch (err) {
-            toast.error(err)
+            await createRoleService(roleName)
+            toast.success("Role created successfully")
+            onSubmit()
+            setRoleName("")
+        } catch (error) {
+            console.error(error)
+            toast.error("Failed to create role")
         }
     }
   return (

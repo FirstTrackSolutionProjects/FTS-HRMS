@@ -1,18 +1,17 @@
 import { Box, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
-import Popup from "../../CustomComponents/Popup";
 import CustomButton from "../../CustomComponents/CustomButton";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import getRolePermissionsService from "../../../services/getRolePermissionsService";
 import updateRolePermissionsService from "../../../services/updateRolePermissionsService";
 import getPermissionsService from "../../../services/getPermissionsService";
-import { useHeight } from "../../../contexts/HeightContext";
+import ActionPopup from "../../CustomComponents/ActionPopup";
 
-const ManagePermissionsPopup = ({ open, onClose, roleId }) => {
+const ManagePermissionsPopup = ({ open, onClose, onSubmit, roleId }) => {
     if (!open) return null;
-    const { height } = useHeight();
     const [permissions, setPermissions] = useState([]);
     const [selectedPermissions, setSelectedPermissions] = useState([]);
+    const popupRef = useRef()
 
     useEffect(() => {
         if (roleId) {
@@ -23,27 +22,19 @@ const ManagePermissionsPopup = ({ open, onClose, roleId }) => {
 
     const fetchAllPermissions = async () => {
         try {
-            const response = await getPermissionsService();
-            if (response?.success) {
-                setPermissions(response?.permissions);
-            } else {
-                toast.error("Failed to fetch all permissions.");
-            }
-        } catch (e) {
-            toast.error(e);
+            const permissions = await getPermissionsService();
+            setPermissions(permissions);
+        } catch (error) {
+            toast.error("Failed to fetch all permissions.");
         }
     };
 
     const fetchRolePermissions = async () => {
         try {
-            const response = await getRolePermissionsService(roleId);
-            if (response?.success) {
-                setSelectedPermissions(response?.permissions?.map(p => p.permission_id) || []);
-            } else {
-                toast.error("Failed to fetch role permissions.");
-            }
+            const permissions = await getRolePermissionsService(roleId);
+            setSelectedPermissions(permissions?.map(permission => permission.id) || []);
         } catch (error) {
-            toast.error(error);
+            toast.error("Failed to fetch role permissions.");
         }
     };
 
@@ -57,52 +48,58 @@ const ManagePermissionsPopup = ({ open, onClose, roleId }) => {
 
     const handleSubmit = async () => {
         try {
-            const response = await updateRolePermissionsService(roleId, selectedPermissions);
-            if (response?.success) {
-                toast.success("Permissions updated successfully!");
-                onClose();
-            } else {
-                toast.error("Failed to update permissions.");
-            }
+            await updateRolePermissionsService(roleId, selectedPermissions);
+            toast.success("Permissions updated successfully!");
+            onSubmit()
         } catch (err) {
-            toast.error("Error updating permissions.");
+            toast.error("Failed to update permissions.");
         }
     };
 
     return (
-        <Popup open={open} close={onClose} title="Manage Role Permissions">
-            <Box sx={{ display: "flex", flexDirection: "column", height: height*0.7, minHeight: 0, }}>
-                {/* Scrollable area */}
-                <Box sx={{ flex: "1 1 auto", minHeight: 0, overflowY: "auto", padding: 2}}>
-                    <FormGroup>
-                        {permissions.map((permission) => (
-                            <FormControlLabel
-                                key={permission?.permission_id}
-                                control={
-                                    <Checkbox
-                                        checked={selectedPermissions.includes(permission?.permission_id)}
-                                        onChange={() => handlePermissionChange(permission?.permission_id)}
-                                    />
-                                }
-                                label={permission?.permission_name}
+        <ActionPopup open={open} onClose={onClose} title="Manage Role Permissions" ref={popupRef}
+            actions={[
+                             <CustomButton
+                                title="Update Permissions"
+                                variant="contained"
+                                color="primary"
+                                size="small"
+                                onClick={handleSubmit}  
                             />
-                        ))}
-                    </FormGroup>
-                </Box>
-
-                {/* Sticky update button */}
-                <Box sx={{ padding: 2, borderTop: "1px solid #ddd", background: "#fff"}}>
-                    <CustomButton
-                        title="Update Permissions"
-                        variant="contained"
-                        color="primary"
-                        size="small"
-                        onClick={handleSubmit}
-                        sx={{ width: "100%" }}
-                    />
-                </Box>
-            </Box>
-        </Popup>
+            ]}>
+                        <Box sx={{ minHeight: 0, overflowY: "auto", padding: 2}}>
+                            <FormGroup>
+                                {permissions.map((permission) => (
+                                    <FormControlLabel
+                                        key={permission?.id}
+                                        control={
+                                            <Checkbox
+                                                checked={selectedPermissions.includes(permission?.id)}
+                                                onChange={() => handlePermissionChange(permission?.id)}
+                                            />
+                                        }
+                                        label={permission?.name}
+                                    />
+                                ))}
+                            </FormGroup>
+                        </Box>
+                </ActionPopup>
+        //         action={
+        //             <>
+        //                 <Box sx={{ padding: 1, borderTop: "1px solid #ddd", background: "#fff"}}>
+        //                     <CustomButton
+        //                         title="Update Permissions"
+        //                         variant="contained"
+        //                         color="primary"
+        //                         size="small"
+        //                         onClick={handleSubmit}
+        //                         sx={{ width: "100%" }}
+        //                     />
+        //                 </Box>
+        //             </>
+        //         }
+        //     />
+        // </ActionPopup>
     );
 };
 

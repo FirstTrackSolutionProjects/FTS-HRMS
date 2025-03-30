@@ -8,7 +8,7 @@ import { useAuth } from '../../contexts/AuthContext';
 const SideMenu = () => {
     const location = useLocation()
     const navigate = useNavigate()
-    const {permissions, is_superadmin} = useAuth()
+    const {checkPermission, is_superadmin} = useAuth()
   return (
     <Box className="h-screen w-full flex flex-col space-y-2 items-center" gap={4}>
         <Box component={'img'} className='w-16 h-16 rounded-full p-2' src='/logo.jpg' />
@@ -34,7 +34,7 @@ const SideMenu = () => {
         >
             {sidebarNavItems.map((headerNavItems, index)=>{
                 if (!is_superadmin && headerNavItems?.permissions?.length &&
-                    !headerNavItems.permissions.every(p => permissions.includes(p))
+                    !headerNavItems.permissions.every(p => checkPermission(p))
                   ) return;
                 return (
                 <>

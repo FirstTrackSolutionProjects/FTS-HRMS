@@ -10,13 +10,24 @@ const updateRolePermissionsService = async (role_id, permissions) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                permissions : permissions
+                permissions: permissions
             }),
         });
-        const data = await response.json();
-        return data;
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error("Something went wrong");
+        }
+
+        if (!data?.success) {
+            throw new Error(data?.message);
+        }
+
+        return data?.data;
     } catch (error) {
-        throw new Error(`Error updating role permissions: ${error.message}`);
+        console.error(error);
+        throw error instanceof Error ? error : new Error("An unexpected error occurred");
     }
 }
 

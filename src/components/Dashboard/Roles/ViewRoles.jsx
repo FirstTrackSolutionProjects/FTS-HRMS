@@ -2,7 +2,7 @@ import { Box, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { useWidth } from '../../../contexts/WidthContext'
 import { useEffect, useMemo, useState } from 'react'
-import getAllRoles from '../../../services/getAllRoles'
+import getAllRolesService from '../../../services/getAllRolesService'
 import CustomButton from '../../CustomComponents/CustomButton'
 import AddRoles from './AddRoles'
 import { useAuth } from '../../../contexts/AuthContext'
@@ -15,11 +15,11 @@ import ManagePermissionsPopup from './ManagePermissionsPopup'
 import DeleteRoleConfirmationPopup from './DeleteRoleConfirmPopup'
 const ViewRoles = () => {
     const { width } = useWidth()
-    const { permissions } = useAuth()
+    const { permissions, checkPermission, getPermissions } = useAuth()
 
     const allColumns = [
       { field: 'space', headerName: '', width: 1, disableColumnMenu: true, sortable: false},
-      { field: 'role_name', headerName: 'Role Name', width: 150 },
+      { field: 'name', headerName: 'Role Name', width: 150 },
       { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
         const [updateRolePopupOpen, setUpdateRolePopupOpen] = useState(false)
         const handleUpdateRolePopup = () => {
@@ -27,12 +27,16 @@ const ViewRoles = () => {
         }
         const handleUpdateRoleEvent = () => {
           setUpdateRolePopupOpen(false)
-          showAllRoles()
+          getAllRoles()
         }
 
         const [managePermissionsPopupOpen, setManagePermissionsPopupOpen] = useState(false)
         const handleManagePermissionsPopup = () => {
           setManagePermissionsPopupOpen((prev)=>!prev)
+        }
+        const handleRolePermissionUpdateEvent = () => {
+          setManagePermissionsPopupOpen(false)
+          getPermissions()
         }
 
         const [deleteRolePopupOpen, setDeleteRolePopupOpen] = useState(false)
@@ -41,18 +45,18 @@ const ViewRoles = () => {
         }
         const handleDeleteRoleEvent = () => {
           setUpdateRolePopupOpen(false)
-          showAllRoles()
+          getAllRoles()
         }
 
         return (
         <>
         <Box className="flex flex-1 items-center h-full" gap={2}>
-          {permissions.includes(PERMISSIONS.UPDATE_ROLE) && <EditIcon onClick={handleUpdateRolePopup} />}
-          {permissions.includes(PERMISSIONS.UPDATE_ROLE) && <PermissionIcon onClick={handleManagePermissionsPopup} />}
-          {permissions.includes(PERMISSIONS.DELETE_ROLE) && <DeleteIcon onClick={handleDeleteRolePopup} />}
+          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <EditIcon onClick={handleUpdateRolePopup} />}
+          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <PermissionIcon onClick={handleManagePermissionsPopup} />}
+          {checkPermission(PERMISSIONS.DELETE_ROLE) && <DeleteIcon onClick={handleDeleteRolePopup} />}
         </Box>
         <UpdateRole open={updateRolePopupOpen} onClose={handleUpdateRolePopup} onSubmit={handleUpdateRoleEvent} roleId={params?.id}  />
-        <ManagePermissionsPopup open={managePermissionsPopupOpen} onClose={handleManagePermissionsPopup} roleId={params?.id} />
+        <ManagePermissionsPopup open={managePermissionsPopupOpen} onSubmit={handleRolePermissionUpdateEvent} onClose={handleManagePermissionsPopup} roleId={params?.id} />
         <DeleteRoleConfirmationPopup open={deleteRolePopupOpen} onClose={handleDeleteRolePopup} onSubmit={handleDeleteRoleEvent} roleId={params?.id} />
         </>
       )}
@@ -63,7 +67,7 @@ const ViewRoles = () => {
 
     const columns = useMemo(() => {
       return allColumns.filter((col) => {
-        if (col.field === "action" && !permissions.includes(PERMISSIONS.UPDATE_ROLE)) return false;
+        if (col.field === "action" && !checkPermission(PERMISSIONS.UPDATE_ROLE)) return false;
         return true;
       });
     }, [permissions]);
@@ -73,7 +77,6 @@ const ViewRoles = () => {
     const [filteredRows, setFilteredRows] = useState([])
     const [roleNameSearch, setRoleNameSearch] = useState('')
     const [addRolePopupOpen, setAddRolePopupOpen] = useState(false)
-    const [selectedRoleId, setSelectedRoleId] = useState(null)
 
     const handleAddRolePopup = () => {
       setAddRolePopupOpen((prev)=>!prev)
@@ -81,15 +84,15 @@ const ViewRoles = () => {
 
     const handleAddRoleEvent = () => {
       setAddRolePopupOpen(false)
-      showAllRoles()
+      getAllRoles()
     }
 
-    const showAllRoles = async () => {
-      const roles = await getAllRoles()
+    const getAllRoles = async () => {
+      const roles = await getAllRolesService()
       setRows(roles)
     }
     useEffect(()=> {
-      showAllRoles()
+      getAllRoles()
     },[])
 
     useEffect(()=>{
@@ -98,7 +101,7 @@ const ViewRoles = () => {
     },[rows])
 
     useEffect(()=>{
-      setFilteredRows(rows.filter(row => row.role_name.toLowerCase().includes(roleNameSearch.toLowerCase())))
+      setFilteredRows(rows.filter(row => row.name.toLowerCase().includes(roleNameSearch.toLowerCase())))
     },[roleNameSearch])
   return (
     <Box className="p-4">
@@ -136,7 +139,6 @@ const ViewRoles = () => {
       <DataGrid
         rows={filteredRows}
         columns={columns}
-        getRowId={(row) => row?.role_id}
         pageSizeOptions={[5,10,15]}
         disableRowSelectionOnClick
         sx={{
