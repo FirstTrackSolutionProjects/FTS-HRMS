@@ -13,11 +13,21 @@ const updateRoleService = async (role_id, new_role_name) => {
                 role_name: new_role_name
             }),
         });
-        const data = await response.json();
-        return data;
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error("Something went wrong");
+        }
+
+        if (!data?.success) {
+            throw new Error(data?.message);
+        }
+
+        return data?.data;
     } catch (error) {
         console.error(error);
-        throw new Error('Failed to update role');
+        throw error instanceof Error ? error : new Error("An unexpected error occurred");
     }
 }
 

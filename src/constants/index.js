@@ -6,37 +6,31 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaMoneyBill1Wave } from "react-icons/fa6";
 import { RiAdminFill } from "react-icons/ri";
-import ManagerDashboardHome from "../components/ManagerDashboard/ManagerDashboardHome/ManagerDashboardHome";
-import ManagerDashboardUsers from "../components/ManagerDashboard/ManagerDashboardUsers/ManagerDashboardUsers";
-import ManagerDashboardAnnouncements from "../components/ManagerDashboard/ManagerDashboardAnnouncements/ManagerDashboardAnnouncements";
-import ManagerDashboardEmployees from "../components/ManagerDashboard/ManagerDashboardEmployees/ManagerDashboardEmployees";
-import ManagerDashboardAttendance from "../components/ManagerDashboard/ManagerDashboardAttendance/ManagerDashboardAttendance";
-import ManagerDashboardLeave from "../components/ManagerDashboard/ManagerDashboardLeave/ManagerDashboardLeave";
-import ManagerDashboardPayroll from "../components/ManagerDashboard/ManagerDashboardPayroll/ManagerDashboardPayroll";
-import ManagerDashboardRoles from "../components/ManagerDashboard/ManagerDashboardRoles/ManagerDashboardRoles";
+import Home from "../components/Dashboard/Home/Home";
+import Users from "../components/Dashboard/Users/Users";
+import Announcements from "../components/Dashboard/Announcements/Announcements";
+import Employees from "../components/Dashboard/Employees/Employees";
+import Attendance from "../components/Dashboard/Attendance/Attendance";
+import Leave from "../components/Dashboard/Leave/Leave";
+import Payroll from "../components/Dashboard/Payroll/Payroll";
+import Roles from "../components/Dashboard/Roles/Roles";
 
 export const PERMISSIONS = Object.freeze({
-    CREATE_MANAGER: 'CREATE_MANAGER',
-    UPDATE_MANAGER: 'UPDATE_MANAGER',
-    AUDIT_MANAGER: 'AUDIT_MANAGER',
-    CREATE_ANNOUNCEMENT: 'CREATE_ANNOUNCEMENT',
-    UPDATE_ANNOUNCEMENT: 'UPDATE_ANNOUNCEMENT',
-    DELETE_ANNOUNCEMENT: 'DELETE_ANNOUNCEMENT',
-    AUDIT_ANNOUNCEMENT: 'AUDIT_ANNOUNCEMENT',
-    CREATE_EMPLOYEE: 'CREATE_EMPLOYEE',
-    UPDATE_EMPLOYEE: 'UPDATE_EMPLOYEE',
-    AUDIT_EMPLOYEE: 'AUDIT_EMPLOYEE',
-    UPDATE_ATTENDANCE: 'UPDATE_ATTENDANCE',
-    AUDIT_ATTENDANCE: 'AUDIT_ATTENDANCE',
-    UPDATE_LEAVE: 'UPDATE_LEAVE',
-    AUDIT_LEAVE: 'AUDIT_LEAVE',
-    CREATE_PAYROLL: 'CREATE_PAYROLL',
-    UPDATE_PAYROLL: 'UPDATE_PAYROLL',
-    AUDIT_PAYROLL: 'AUDIT_PAYROLL',
-    CREATE_ROLE: 'CREATE_ROLE',
-    UPDATE_ROLE: 'UPDATE_ROLE',
-    DELETE_ROLE: 'DELETE_ROLE',
-    AUDIT_ROLE: 'AUDIT_ROLE'
+    AUDIT_JOINUS: 'AUDIT JOINUS',
+    MANAGE_JOINUS: 'MANAGE JOINUS',
+    AUDIT_PAYROLL: 'AUDIT PAYROLL',
+    MANAGE_PAYROLL: 'MANAGE PAYROLL',
+    CREATE_ANNOUNCEMENT: 'CREATE ANNOUNCEMENT',
+    UPDATE_ANNOUNCEMENT: 'UPDATE ANNOUNCEMENT',
+    DELETE_ANNOUNCEMENT: 'DELETE ANNOUNCEMENT',
+    AUDIT_ANNOUNCEMENT: 'AUDIT ANNOUNCEMENT',
+    AUDIT_ATTENDANCE: 'AUDIT ATTENDANCE',
+    MANAGE_ATTENDANCE: 'MANAGE ATTENDANCE',
+    AUDIT_LEAVE: 'AUDIT LEAVE',
+    AUDIT_ROLE: 'AUDIT ROLE',
+    UPDATE_ROLE: 'UPDATE ROLE',
+    CREATE_ROLE: 'CREATE ROLE',
+    DELETE_ROLE: 'DELETE ROLE'
 });
 
 export const headerNavItems = Object.freeze([
@@ -54,61 +48,54 @@ export const headerNavItems = Object.freeze([
     }
 ])
 
-export const adminSidebarNavItems = Object.freeze([
+export const sidebarNavItems = Object.freeze([
     {
         label: 'Dashboard',
         to: '/home',
         icon: MdDashboardCustomize,
-        component: ManagerDashboardHome,
+        component: Home,
         permissions: []
     },
     {
-        label: 'Users',
-        to: '/users',
+        label: 'Employees',
+        to: '/employees',
         icon: FaUsers,
-        component: ManagerDashboardUsers,
-        permissions: ['AUDIT_MANAGER']
+        component: Employees,
+        permissions: [PERMISSIONS.AUDIT_JOINUS]
     },
     {
         label: 'Announcements',
         to: '/announcements',
         icon: TfiAnnouncement,
-        component: ManagerDashboardAnnouncements,
-        permissions: ['AUDIT_ANNOUNCEMENT']
-    },
-    {
-        label: 'Employees',
-        to: '/employees',
-        icon: GoPersonFill,
-        component: ManagerDashboardEmployees,
-        permissions: ['AUDIT_EMPLOYEE']
+        component: Announcements,
+        permissions: [PERMISSIONS.AUDIT_ANNOUNCEMENT]
     },
     {
         label: 'Attendance',
         to: '/attendance',
         icon: FaRegCalendarAlt,
-        component: ManagerDashboardAttendance,
-        permissions: ['AUDIT_ATTENDANCE']
+        component: Attendance,
+        permissions: [PERMISSIONS.AUDIT_ATTENDANCE]
     },
     {
         label: 'Leaves',
         to: '/leaves',
         icon: FaPencilAlt,
-        component: ManagerDashboardLeave,
-        permissions: ['AUDIT_LEAVE']
+        component: Leave,
+        permissions: [PERMISSIONS.AUDIT_LEAVE]
     },
     {
         label: 'Payroll',
         to: '/payroll',
         icon: FaMoneyBill1Wave,
-        component: ManagerDashboardPayroll,
-        permissions: ['AUDIT_PAYROLL']
+        component: Payroll,
+        permissions: [PERMISSIONS.AUDIT_PAYROLL]
     },
     {
         label: 'Roles',
         to: '/roles',
         icon: RiAdminFill,
-        component: ManagerDashboardRoles,
-        permissions: ['AUDIT_ROLE']
+        component: Roles,
+        permissions: [PERMISSIONS.AUDIT_ROLE]
     }
 ])
