@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
-import Popup from "../../CustomComponents/Popup";
-import CustomButton from "../../CustomComponents/CustomButton";
-import deleteRoleService from "../../../services/deleteRoleService";
+import Popup from "@/components/CustomComponents/Popup";
+import CustomButton from "@/components/CustomComponents/CustomButton";
+import deleteRoleService from "@/services/deleteRoleService";
 import { toast } from "react-toastify";
 
 const DeleteRoleConfirmationPopup = ({ open, onClose, onSubmit, roleId }) => {

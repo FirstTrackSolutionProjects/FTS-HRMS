@@ -13,7 +13,7 @@ const Popup = ({
   close,
   title,
   ref,
-  maxWidth="md",
+  maxWidth="xl",
   secondaryColor,
   sx,
   ...rest

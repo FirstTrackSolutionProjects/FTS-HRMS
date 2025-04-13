@@ -1,8 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import validateTokenService from '../services/validateTokenService';
+import validateTokenService from '@/services/validateTokenService';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import getEmployeePermissionsService from '../services/getEmployeePermissionsService';
+import getEmployeePermissionsService from '@/services/getEmployeePermissionsService';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {

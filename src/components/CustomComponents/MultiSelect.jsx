@@ -3,10 +3,11 @@ import { Autocomplete, TextField, Checkbox } from "@mui/material";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
-const MultiSelect = ({ options, selectedValues, setSelectedValues, label }) => {
+const MultiSelect = ({ options, selectedValues, setSelectedValues, label, ref }) => {
   return (
     <Autocomplete
       multiple
+      ref={ref}
       options={options}
       size="small"
       sx={{
