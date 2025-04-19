@@ -9,7 +9,7 @@ import { RiAdminFill } from "react-icons/ri";
 import Home from "@/components/Dashboard/Home/Home";
 import Users from "@/components/Dashboard/Users/Users";
 import Announcements from "@/components/Dashboard/Announcements/Announcements";
-import Employees from "@/components/Dashboard/Employees/Employees";
+import Employees from "@/components/Dashboard/Operation/ManageEmployees/Employees";
 import Attendance from "@/components/Dashboard/Attendance/Attendance";
 import Leave from "@/components/Dashboard/Leave/Leave";
 import Payroll from "@/components/Dashboard/Payroll/Payroll";
@@ -18,6 +18,7 @@ import Organization from "@/components/Dashboard/Organization/Organization";
 import ManageBranch from "@/components/Dashboard/Organization/ManageBranch/ManageBranch";
 import ManageDepartment from "@/components/Dashboard/Organization/ManageDepartment/ManageDepartment";
 import Operation from "@/components/Dashboard/Operation/Operation";
+import PayrollPolicy from "@/components/Dashboard/Organization/PayrollPolicy/PayrollPolicy";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -62,13 +63,6 @@ export const sidebarNavItems = Object.freeze([
         icon: MdDashboardCustomize,
         component: Home,
         permissions: []
-    },
-    {
-        label: 'Employees',
-        to: '/employees',
-        icon: FaUsers,
-        component: Employees,
-        permissions: [PERMISSIONS.AUDIT_JOINUS]
     },
     {
         label: 'Announcements',
@@ -137,23 +131,32 @@ export const organizationServices = [
         component: ManageRoles
     },
     {
-        title: 'Payroll',
+        title: 'Payroll Policy',
+        to: 'payroll-policy',
         description: 'Payroll Management System',
-        icon: FaMoneyBill1Wave
+        icon: FaMoneyBill1Wave,
+        component: PayrollPolicy
     },
     {
-        title: 'Leave Management',
+        title: 'Leave Policy',
         description: 'Leave Management System',
         icon: FaPencilAlt
     },
     {
-        title: 'Attendance',
+        title: 'Attendance Policy',
         description: 'Attendance Management System',
         icon: FaRegCalendarAlt
     }
 ]
 
 export const operationServices = [
+    {
+        title: 'Employees',
+        description: 'Manage Employees',
+        to: 'employees',
+        icon: FaUsers,
+        component: Employees
+    },
     {
         title: 'Payroll',
         description: 'Payroll Management System',

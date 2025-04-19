@@ -1,13 +1,13 @@
 import { Box, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-import { useWidth } from '../../../contexts/WidthContext'
+import { useWidth } from '@/contexts/WidthContext'
 import { useEffect, useMemo, useState } from 'react'
-import CustomButton from '../../CustomComponents/CustomButton'
-import { useAuth } from '../../../contexts/AuthContext'
-import { PERMISSIONS } from '../../../constants'
+import CustomButton from '@/components/CustomComponents/CustomButton'
+import { useAuth } from '@/contexts/AuthContext'
+import { PERMISSIONS } from '@/constants'
 import AddEmployees from './AddEmployees'
 
-import getAllEmployeesService from '../../../services/getAllEmployeesService'
+import getAllEmployeesService from '@/services/getAllEmployeesService'
 import ViewIcon from '@/icons/ViewIcon'
 import ViewEditEmployeeDetails from './ViewEditEmployeeDetails'
 const ViewEmployees = () => {
