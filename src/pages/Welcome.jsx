@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { Helmet } from "react-helmet";
-import { useWidth } from "../contexts/WidthContext";
+import { useWidth } from "@/contexts/WidthContext";
 import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({

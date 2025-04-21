@@ -1,26 +1,27 @@
 import { Box, TextField } from "@mui/material"
-import Popup from "../../CustomComponents/Popup"
-import CustomButton from "../../CustomComponents/CustomButton"
+import Popup from "@/components/CustomComponents/Popup"
+import CustomButton from "@/components/CustomComponents/CustomButton"
+import createRoleService from "@/services/createRoleService"
 import { toast } from "react-toastify"
 import { useState } from "react"
-import updateRoleService from "../../../services/updateRoleService"
-const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
+const AddRoles = ({open, onClose, onSubmit}) => {
     const [roleName, setRoleName] = useState("")
     const handleSubmit = async () => {
         try {
-            await updateRoleService(roleId, roleName)
-            toast.success("Role updated successfully")
+            await createRoleService(roleName)
+            toast.success("Role created successfully")
             onSubmit()
             setRoleName("")
-        } catch (err) {
-            toast.error("Failed to update role")
+        } catch (error) {
+            console.error(error)
+            toast.error("Failed to create role")
         }
     }
   return (
     <Popup
         open={open}
         close={onClose}
-        title="Update Role"
+        title="Add Role"
     >
         <Box sx={{
             display: 'flex',
@@ -28,7 +29,7 @@ const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
         }}>
         <TextField
             size="small"
-            label="New Role Name"
+            label="Role Name"
             variant="outlined" 
             value={roleName}
             onChange={(e) => setRoleName(e.target.value)}
@@ -37,7 +38,7 @@ const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
             }}
         />
         <CustomButton
-        title="Update"
+        title="Create"
         variant="contained"
         color="primary"
         size="small"
@@ -52,4 +53,4 @@ const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
   )
 }
 
-export default UpdateRole
+export default AddRoles

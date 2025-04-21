@@ -1,27 +1,26 @@
 import { Box, TextField } from "@mui/material"
-import Popup from "../../CustomComponents/Popup"
-import CustomButton from "../../CustomComponents/CustomButton"
-import createRoleService from "../../../services/createRoleService"
+import Popup from "@/components/CustomComponents/Popup"
+import CustomButton from "@/components/CustomComponents/CustomButton"
 import { toast } from "react-toastify"
 import { useState } from "react"
-const AddRoles = ({open, onClose, onSubmit}) => {
+import updateRoleService from "@/services/updateRoleService"
+const UpdateRole = ({open, onClose, onSubmit, roleId}) => {
     const [roleName, setRoleName] = useState("")
     const handleSubmit = async () => {
         try {
-            await createRoleService(roleName)
-            toast.success("Role created successfully")
+            await updateRoleService(roleId, roleName)
+            toast.success("Role updated successfully")
             onSubmit()
             setRoleName("")
-        } catch (error) {
-            console.error(error)
-            toast.error("Failed to create role")
+        } catch (err) {
+            toast.error("Failed to update role")
         }
     }
   return (
     <Popup
         open={open}
         close={onClose}
-        title="Add Role"
+        title="Update Role"
     >
         <Box sx={{
             display: 'flex',
@@ -29,7 +28,7 @@ const AddRoles = ({open, onClose, onSubmit}) => {
         }}>
         <TextField
             size="small"
-            label="Role Name"
+            label="New Role Name"
             variant="outlined" 
             value={roleName}
             onChange={(e) => setRoleName(e.target.value)}
@@ -38,7 +37,7 @@ const AddRoles = ({open, onClose, onSubmit}) => {
             }}
         />
         <CustomButton
-        title="Create"
+        title="Update"
         variant="contained"
         color="primary"
         size="small"
@@ -53,4 +52,4 @@ const AddRoles = ({open, onClose, onSubmit}) => {
   )
 }
 
-export default AddRoles
+export default UpdateRole

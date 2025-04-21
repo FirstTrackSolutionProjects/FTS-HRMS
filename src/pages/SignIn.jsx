@@ -2,10 +2,10 @@ import { Helmet } from "react-helmet"
 import { Box, TextField, Button, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { useWidth } from '../contexts/WidthContext'
+import { useWidth } from '@/contexts/WidthContext'
 const API_URL = import.meta.env.VITE_APP_API_URL
 
 const SignInForm = () => {

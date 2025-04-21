@@ -1,9 +1,9 @@
 import { Box } from '@mui/material'
-import { sidebarNavItems } from '../../constants'
+import { sidebarNavItems } from '@/constants'
 import { Tooltip } from 'react-tooltip'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { CgProfile } from "react-icons/cg";
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const SideMenu = () => {
     const location = useLocation()
@@ -42,7 +42,7 @@ const SideMenu = () => {
                         key={index} 
                         data-tooltip-id={headerNavItems.label} 
                         className={`relative min-w-10 w-10 min-h-10 h-10 flex items-center justify-center text-white text-2xl rounded-lg hover:bg-[rgba(255,255,255,0.4)] ${location.pathname.startsWith('/dashboard'+headerNavItems.to)?'bg-[rgba(255,255,255,0.5)]':'bg-[rgba(255,255,255,0.2)]'} cursor-pointer`}
-                        onClick={()=>navigate('/dashboard'+headerNavItems.to)}
+                        onClick={()=>navigate('/dashboard'+headerNavItems.to.replace('/*',''))}
                     >
                         <headerNavItems.icon />
                     </Box>

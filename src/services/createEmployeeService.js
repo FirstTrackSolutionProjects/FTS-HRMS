@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_APP_API_URL;
 
-const createEmployeeService = async (employeeData, payrollData, roleIds) => {
+const createEmployeeService = async (employeeData, payrollData) => {
     try {
         const response = await fetch(`${API_URL}/employees/create`, {
             method: 'POST',
@@ -11,8 +11,7 @@ const createEmployeeService = async (employeeData, payrollData, roleIds) => {
             },
             body: JSON.stringify({
                 employee_data: employeeData,
-                payroll_data: payrollData,
-                role_ids: roleIds
+                payroll_data: payrollData
             }),
         });
 

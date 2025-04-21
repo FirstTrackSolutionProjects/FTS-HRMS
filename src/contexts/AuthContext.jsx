@@ -1,12 +1,13 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import validateTokenService from '../services/validateTokenService';
+import validateTokenService from '@/services/validateTokenService';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import getEmployeePermissionsService from '../services/getEmployeePermissionsService';
+import { useNavigate, useLocation } from 'react-router-dom';
+import getEmployeePermissionsService from '@/services/getEmployeePermissionsService';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [authState, setAuthState] = useState({isAuthenticated: false});
   const [permissions, setPermissions] = useState([]);
   const [permissionEmployeeId, setPermissionEmployeeId] = useState(null);
@@ -50,6 +51,7 @@ export const AuthProvider = ({ children }) => {
         setAuthState({isAuthenticated: true, id : user?.id, is_superadmin: user?.is_superadmin });
         getPermissions();
     } catch (error) {
+      location.pathname.includes('/dashboard')?navigate('/sign-in'):null;
       console.log(error);
       toast.error(error)
       return false;

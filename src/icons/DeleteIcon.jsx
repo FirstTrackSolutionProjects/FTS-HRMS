@@ -1,9 +1,9 @@
 import React from 'react'
 import { FaTrash } from "react-icons/fa";
 
-const DeleteIcon = ({onClick=()=>{}}) => {
+const DeleteIcon = ({onClick=()=>{}, className}) => {
   return (
-    <FaTrash className='cursor-pointer text-red-500' onClick={onClick} />
+    <FaTrash className={`cursor-pointer text-red-500 ${className}`} onClick={onClick} />
   )
 }
 

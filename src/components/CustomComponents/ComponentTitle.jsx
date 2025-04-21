@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
-import { useWidth } from '../../contexts/WidthContext'
+import { useWidth } from '@/contexts/WidthContext'
 const ComponentTitle = ({title}) => {
     const {width} = useWidth()
   return (

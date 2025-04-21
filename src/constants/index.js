@@ -1,19 +1,24 @@
 import { MdDashboardCustomize } from "react-icons/md";
-import { FaUsers } from "react-icons/fa";
+import { FaHome, FaUsers } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
 import { FaPencilAlt } from "react-icons/fa";
 import { FaMoneyBill1Wave } from "react-icons/fa6";
 import { RiAdminFill } from "react-icons/ri";
-import Home from "../components/Dashboard/Home/Home";
-import Users from "../components/Dashboard/Users/Users";
-import Announcements from "../components/Dashboard/Announcements/Announcements";
-import Employees from "../components/Dashboard/Employees/Employees";
-import Attendance from "../components/Dashboard/Attendance/Attendance";
-import Leave from "../components/Dashboard/Leave/Leave";
-import Payroll from "../components/Dashboard/Payroll/Payroll";
-import Roles from "../components/Dashboard/Roles/Roles";
+import Home from "@/components/Dashboard/Home/Home";
+import Users from "@/components/Dashboard/Users/Users";
+import Announcements from "@/components/Dashboard/Announcements/Announcements";
+import Employees from "@/components/Dashboard/Operation/ManageEmployees/Employees";
+import Attendance from "@/components/Dashboard/Attendance/Attendance";
+import Leave from "@/components/Dashboard/Leave/Leave";
+import Payroll from "@/components/Dashboard/Payroll/Payroll";
+import ManageRoles from "@/components/Dashboard/Organization/ManageRoles/ManageRoles";
+import Organization from "@/components/Dashboard/Organization/Organization";
+import ManageBranch from "@/components/Dashboard/Organization/ManageBranch/ManageBranch";
+import ManageDepartment from "@/components/Dashboard/Organization/ManageDepartment/ManageDepartment";
+import Operation from "@/components/Dashboard/Operation/Operation";
+import PayrollPolicy from "@/components/Dashboard/Organization/PayrollPolicy/PayrollPolicy";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -30,7 +35,10 @@ export const PERMISSIONS = Object.freeze({
     AUDIT_ROLE: 'AUDIT ROLE',
     UPDATE_ROLE: 'UPDATE ROLE',
     CREATE_ROLE: 'CREATE ROLE',
-    DELETE_ROLE: 'DELETE ROLE'
+    DELETE_ROLE: 'DELETE ROLE',
+    MANAGE_ORGANIZATION: 'MANAGE ORGANIZATION',
+    UPDATE_DEPARTMENT: 'UPDATE DEPARTMENT',
+    UPDATE_DESIGNATION: 'UPDATE DESIGNATION'
 });
 
 export const headerNavItems = Object.freeze([
@@ -55,13 +63,6 @@ export const sidebarNavItems = Object.freeze([
         icon: MdDashboardCustomize,
         component: Home,
         permissions: []
-    },
-    {
-        label: 'Employees',
-        to: '/employees',
-        icon: FaUsers,
-        component: Employees,
-        permissions: [PERMISSIONS.AUDIT_JOINUS]
     },
     {
         label: 'Announcements',
@@ -92,10 +93,83 @@ export const sidebarNavItems = Object.freeze([
         permissions: [PERMISSIONS.AUDIT_PAYROLL]
     },
     {
-        label: 'Roles',
-        to: '/roles',
-        icon: RiAdminFill,
-        component: Roles,
-        permissions: [PERMISSIONS.AUDIT_ROLE]
+        label: 'Operation',
+        to: '/operation/*',
+        icon: GoPersonFill,
+        component: Operation,
+        permissions: [PERMISSIONS.AUDIT_JOINUS]
+    },
+    {
+        label: 'Organization',
+        to: '/organization/*',
+        icon: FaHome,
+        component: Organization,
+        permissions: [PERMISSIONS.MANAGE_ORGANIZATION]
     }
 ])
+
+export const organizationServices = [
+    {
+        title: 'Branch Manage',
+        to: 'branch',
+        description: 'Manage branches of organization',
+        icon: FaHome,
+        component: ManageBranch
+    },
+    {
+        title: 'Department Manage',
+        to: 'department',
+        description: 'Manage departments of organization',
+        icon: FaHome,
+        component: ManageDepartment
+    },
+    {
+        title: 'Role Manage',
+        to: 'role',
+        description: 'Manage roles of organization',
+        icon: RiAdminFill,
+        component: ManageRoles
+    },
+    {
+        title: 'Payroll Policy',
+        to: 'payroll-policy',
+        description: 'Payroll Management System',
+        icon: FaMoneyBill1Wave,
+        component: PayrollPolicy
+    },
+    {
+        title: 'Leave Policy',
+        description: 'Leave Management System',
+        icon: FaPencilAlt
+    },
+    {
+        title: 'Attendance Policy',
+        description: 'Attendance Management System',
+        icon: FaRegCalendarAlt
+    }
+]
+
+export const operationServices = [
+    {
+        title: 'Employees',
+        description: 'Manage Employees',
+        to: 'employees',
+        icon: FaUsers,
+        component: Employees
+    },
+    {
+        title: 'Payroll',
+        description: 'Payroll Management System',
+        icon: FaMoneyBill1Wave
+    },
+    {
+        title: 'Leave Management',
+        description: 'Leave Management System',
+        icon: FaPencilAlt
+    },
+    {
+        title: 'Attendance',
+        description: 'Attendance Management System',
+        icon: FaRegCalendarAlt
+    }
+]

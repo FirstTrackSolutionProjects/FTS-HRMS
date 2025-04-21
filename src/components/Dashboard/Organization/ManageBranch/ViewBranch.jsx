@@ -1,0 +1,132 @@
+import { Box, TextField } from '@mui/material'
+import { DataGrid } from '@mui/x-data-grid'
+import { useWidth } from '@/contexts/WidthContext'
+import { useEffect, useMemo, useState } from 'react'
+import getAllBranchesService from '@/services/getAllBranchesService'
+import CustomButton from '@/components/CustomComponents/CustomButton'
+import { useAuth } from '@/contexts/AuthContext'
+import { PERMISSIONS } from '@/constants'
+import EditIcon from '@/icons/EditIcon'
+import UpdateBranch from '@/components/Dashboard/Organization/ManageBranch/UpdateBranch'
+import AddBranch from '@/components/Dashboard/Organization/ManageBranch/AddBranch'
+const ViewBranch = () => {
+    const { width } = useWidth()
+    const { permissions, checkPermission } = useAuth()
+
+    const allColumns = [
+      { field: 'space', headerName: '', width: 1, disableColumnMenu: true, sortable: false},
+      { field: 'id', headerName: 'Branch ID', width: 100},
+      { field: 'name', headerName: 'Branch Name', width: 150 },
+      { field: 'address', headerName: 'Address', width: 250},
+      { field: 'city', headerName: 'City', width: 100},
+      { field: 'state', headerName: 'State', width: 100},
+      { field: 'country', headerName: 'Country', width: 100},
+      { field: 'createdAt', headerName: 'Created At', width: 200 },
+      { field: 'updatedAt', headerName: 'Updated At', width: 200 },
+      { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
+        const [updateBranchPopupOpen, setUpdateBranchPopupOpen] = useState(false)
+        const handleUpdateBranchPopup = () => {
+          setUpdateBranchPopupOpen((prev)=>!prev)
+        }
+        const handleUpdateBranchEvent = () => {
+          setUpdateBranchPopupOpen(false)
+          getAllBranches()
+        }
+
+        return (
+        <>
+        <Box className="flex flex-1 items-center h-full" gap={2}>
+          {checkPermission(PERMISSIONS.UPDATE_BRANCH) && <EditIcon onClick={handleUpdateBranchPopup} />}
+        </Box>
+        <UpdateBranch open={updateBranchPopupOpen} onClose={handleUpdateBranchPopup} onSubmit={handleUpdateBranchEvent} branchId={params?.id} branchData={params?.row}  />
+        </>
+      )}
+      }
+    ]
+
+    const columns = useMemo(() => {
+      return allColumns.filter((col) => {
+        if (col.field === "action" && !checkPermission("")) return false;
+        return true;
+      });
+    }, [permissions]);
+
+    
+    const [rows, setRows] = useState([]);
+    const [filteredRows, setFilteredRows] = useState([])
+    const [branchNameSearch, setBranchNameSearch] = useState('')
+    const [addBranchPopupOpen, setAddBranchPopupOpen] = useState(false)
+
+    const handleAddBranchPopup = () => {
+      setAddBranchPopupOpen((prev)=>!prev)
+    }
+
+    const handleAddBranchEvent = () => {
+      setAddBranchPopupOpen(false)
+      getAllBranches()
+    }
+
+    const getAllBranches = async () => {
+      const branches = await getAllBranchesService()
+      setRows(branches)
+    }
+    useEffect(()=> {
+      getAllBranches()
+    },[])
+
+    useEffect(()=>{
+      setBranchNameSearch('')
+      setFilteredRows(rows)
+    },[rows])
+
+    useEffect(()=>{
+      setFilteredRows(rows.filter(row => row.name.toLowerCase().includes(branchNameSearch.toLowerCase())))
+    },[branchNameSearch])
+  return (
+    <Box className="p-4">
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center'
+      }}>
+        <Box>
+          <TextField
+            size='small'
+            placeholder="Search By Branch Name"
+            value={branchNameSearch}
+            onChange={(e)=>setBranchNameSearch(e.target.value)}
+            sx={{
+              width: Math.min(width*0.55,400)
+            }}
+          />
+        </Box>
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'flex-end',
+          position: 'relative',
+          alignItems: 'center',
+          flex: 1
+        }}>
+          <CustomButton 
+            sx={{
+              marginY: 1
+            }}
+            title="ADD"
+            onClick={handleAddBranchPopup}
+          />
+        </Box>
+      </Box>
+      <DataGrid
+        rows={filteredRows}
+        columns={columns}
+        pageSizeOptions={[5,10,15]}
+        disableRowSelectionOnClick
+        sx={{
+            fontSize: Math.max(width/100, 15)
+        }}
+      />
+      <AddBranch open={addBranchPopupOpen} onClose={handleAddBranchPopup} onSubmit={handleAddBranchEvent} />
+    </Box>
+  )
+}
+
+export default ViewBranch

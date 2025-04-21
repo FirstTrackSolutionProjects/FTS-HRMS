@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material"
-import ComponentTitle from "../../CustomComponents/ComponentTitle"
+import ComponentTitle from "@/components/CustomComponents/ComponentTitle"
 import ViewEmployees from "./ViewEmployees"
 
 

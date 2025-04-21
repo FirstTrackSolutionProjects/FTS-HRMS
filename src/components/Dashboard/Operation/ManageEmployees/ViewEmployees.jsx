@@ -1,13 +1,15 @@
 import { Box, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
-import { useWidth } from '../../../contexts/WidthContext'
+import { useWidth } from '@/contexts/WidthContext'
 import { useEffect, useMemo, useState } from 'react'
-import CustomButton from '../../CustomComponents/CustomButton'
-import { useAuth } from '../../../contexts/AuthContext'
-import { PERMISSIONS } from '../../../constants'
+import CustomButton from '@/components/CustomComponents/CustomButton'
+import { useAuth } from '@/contexts/AuthContext'
+import { PERMISSIONS } from '@/constants'
 import AddEmployees from './AddEmployees'
 
-import getAllEmployeesService from '../../../services/getAllEmployeesService'
+import getAllEmployeesService from '@/services/getAllEmployeesService'
+import ViewIcon from '@/icons/ViewIcon'
+import ViewEditEmployeeDetails from './ViewEditEmployeeDetails'
 const ViewEmployees = () => {
     const { width } = useWidth()
     const { permissions, checkPermission } = useAuth()
@@ -19,36 +21,29 @@ const ViewEmployees = () => {
       { field: 'last_name', headerName: 'Last Name', width: 150 },
       { field: 'email', headerName: 'Email', width: 250},
       { field: 'mobile', headerName: 'Mobile', width:150},
-      // { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
-    //     const [updateRolePopupOpen, setUpdateRolePopupOpen] = useState(false)
-    //     const handleUpdateRolePopup = () => {
-    //       setUpdateRolePopupOpen((prev)=>!prev)
-    //     }
-    //     const handleUpdateRoleEvent = () => {
-    //       setUpdateRolePopupOpen(false)
-    //       showAllRoles()
-    //     }
+      { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
+        const [viewEditEmployeeDetailPopupOpen, setViewEditEmployeeDetailPopupOpen] = useState(false)
+        const handleViewEditEmployeeDetailPopup = () => {
+          setViewEditEmployeeDetailPopupOpen((prev)=>!prev)
+        }
+        const handleViewEditEmployeeDetailEvent = () => {
+          setViewEditEmployeeDetailPopupOpen(false)
+          // showAllEmployees()
+        }
 
-    //     const [managePermissionsPopupOpen, setManagePermissionsPopupOpen] = useState(false)
-    //     const handleManagePermissionsPopup = () => {
-    //       setManagePermissionsPopupOpen((prev)=>!prev)
-    //     }
-
-    //     return (
-    //     <>
-    //     <Box className="flex flex-1 items-center h-full" gap={2}>
-    //       {checkPermission(PERMISSIONS.UPDATE_ROLE) && <EditIcon onClick={handleUpdateRolePopup} />}
-    //       {checkPermission(PERMISSIONS.UPDATE_ROLE) && <PermissionIcon onClick={handleManagePermissionsPopup} />}
-    //     </Box>
-    //     <UpdateRole open={updateRolePopupOpen} onClose={handleUpdateRolePopup} onSubmit={handleUpdateRoleEvent} roleId={params?.id}  />
-    //     <ManagePermissionsPopup open={managePermissionsPopupOpen} onClose={handleManagePermissionsPopup} roleId={params?.id} />
-    //     <DeleteRoleConfirmationPopup open={deleteRolePopupOpen} onClose={handleDeleteRolePopup} onSubmit={handleDeleteRoleEvent} roleId={params?.id} />
-    //     </>
-      // )
-    // }
-      // },
-      // { field: 'createdAt', headerName: 'Created At', width: 300 },
-      // { field: 'updatedAt', headerName: 'Updated At', width: 300 }
+        return (
+        <>
+        <Box className="flex flex-1 items-center h-full" gap={2}>
+          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleViewEditEmployeeDetailPopup} />}
+          
+        </Box>
+        <ViewEditEmployeeDetails open={viewEditEmployeeDetailPopupOpen} onClose={handleViewEditEmployeeDetailPopup} onSubmit={handleViewEditEmployeeDetailEvent} employeeId={params?.id}  />
+        </>
+      )
+    }
+      },
+      { field: 'createdAt', headerName: 'Created At', width: 300 },
+      { field: 'updatedAt', headerName: 'Updated At', width: 300 }
     ]
 
     const columns = useMemo(() => {
@@ -94,7 +89,7 @@ const ViewEmployees = () => {
     useEffect(()=>{
       setFilteredRows(rows.filter(row => {
         const employee_name = row?.first_name + (row?.last_name ? ' ' + row?.last_name : '');
-        return employee_name.toLowerCase().startsWith(employeeNameSearch.toLowerCase())
+        return employee_name.toLowerCase().includes(employeeNameSearch.toLowerCase())
       }))
     },[employeeNameSearch])
   return (

@@ -1,11 +1,11 @@
 import { Box, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
-import CustomButton from "../../CustomComponents/CustomButton";
+import CustomButton from "@/components/CustomComponents/CustomButton";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import getRolePermissionsService from "../../../services/getRolePermissionsService";
-import updateRolePermissionsService from "../../../services/updateRolePermissionsService";
-import getPermissionsService from "../../../services/getPermissionsService";
-import ActionPopup from "../../CustomComponents/ActionPopup";
+import getRolePermissionsService from "@/services/getRolePermissionsService";
+import updateRolePermissionsService from "@/services/updateRolePermissionsService";
+import getPermissionsService from "@/services/getPermissionsService";
+import ActionPopup from "@/components/CustomComponents/ActionPopup";
 
 const ManagePermissionsPopup = ({ open, onClose, onSubmit, roleId }) => {
     if (!open) return null;
