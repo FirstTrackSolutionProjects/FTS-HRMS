@@ -17,7 +17,7 @@ export const AppProvider = ({ children }) => {
         setFormUuid(v4());
     }
     const [employeeFields, setEmployeeFields] = useState({
-        photo: { 
+        photo_doc: { 
           required: false, 
           inputType: 'photo', 
           label: "Profile Photo",
@@ -216,7 +216,7 @@ export const AppProvider = ({ children }) => {
           allowedTypes: ['application/pdf'],
           unsupportedTypeMessages: "Only PDF files are supported"
         },
-        roles: {
+        Roles: {
           required: false,
           inputType: 'multiselect',
           label: "Roles",

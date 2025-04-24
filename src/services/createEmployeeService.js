@@ -26,6 +26,7 @@ const createEmployeeService = async (employeeData, payrollData) => {
             throw new Error(data?.message);
         }
         
+        return data;
     } catch (error) {
         console.error(error);
         throw error instanceof Error ? error : new Error("An unexpected error occurred");
