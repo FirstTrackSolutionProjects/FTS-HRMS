@@ -4,8 +4,9 @@ import { useWidth } from '@/contexts/WidthContext'
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { PERMISSIONS } from '@/constants'
-
-import getAllEmployeesService from '@/services/getAllEmployeesService'
+import getEmployeesSchedulingService from '@/services/shiftServices/getEmployeesSchedulingService'
+import EditIcon from '@/icons/EditIcon'
+import AssignShiftPopup from './AssignShiftPopup'
 // import ViewIcon from '@/icons/ViewIcon'
 // import ViewEditEmployeeDetails from './ViewEditEmployeeDetails'
 const ViewEmployeesSchedule = () => {
@@ -17,31 +18,32 @@ const ViewEmployeesSchedule = () => {
       { field: 'id', headerName: 'Employee ID', width: 150},
       { field: 'first_name', headerName: 'First Name', width: 150 },
       { field: 'last_name', headerName: 'Last Name', width: 150 },
-      { field: 'email', headerName: 'Email', width: 250},
-      { field: 'mobile', headerName: 'Mobile', width:150},
+			{ field: 'branch_name', headerName: 'Branch', width: 150 },
+      { field: 'department_name', headerName: 'Department', width: 150 },
+			{ field: 'process_name', headerName: 'Process', width: 150 },
+			{ field: 'shift_name', headerName: 'Shift', width: 150 },
+			{ field: 'batch_name', headerName: 'Batch', width: 150 },
       { field: 'action', headerName: 'Action', width: 100,renderCell: (params) => {
-        // const [viewEditEmployeeDetailPopupOpen, setViewEditEmployeeDetailPopupOpen] = useState(false)
-        // const handleViewEditEmployeeDetailPopup = () => {
-        //   setViewEditEmployeeDetailPopupOpen((prev)=>!prev)
-        // }
-        // const handleViewEditEmployeeDetailEvent = () => {
-        //   setViewEditEmployeeDetailPopupOpen(false)
-        //   // showAllEmployees()
-        // }
+        const [assignShiftPopupOpen, setAssignShiftPopupOpen] = useState(false)
+        const handleAssignShiftPopup = () => {
+          setAssignShiftPopupOpen((prev)=>!prev)
+        }
+        const handleAssignShiftEvent = () => {
+          setAssignShiftPopupOpen(false)
+          showAllEmployees()
+        }
 
         return (
         <>
-        {/* <Box className="flex flex-1 items-center h-full" gap={2}>
-          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleViewEditEmployeeDetailPopup} />}
+        <Box className="flex flex-1 items-center h-full" gap={2}>
+          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <EditIcon onClick={handleAssignShiftPopup} />}
           
         </Box>
-        <ViewEditEmployeeDetails open={viewEditEmployeeDetailPopupOpen} onClose={handleViewEditEmployeeDetailPopup} onSubmit={handleViewEditEmployeeDetailEvent} employeeId={params?.id}  /> */}
+        <AssignShiftPopup open={assignShiftPopupOpen} onClose={handleAssignShiftPopup} onSubmit={handleAssignShiftEvent} employeeId={params?.id}  />
         </>
       )
     }
       },
-      { field: 'createdAt', headerName: 'Created At', width: 300 },
-      { field: 'updatedAt', headerName: 'Updated At', width: 300 }
     ]
 
     const columns = useMemo(() => {
@@ -58,7 +60,7 @@ const ViewEmployeesSchedule = () => {
 
     const showAllEmployees = async () => {
       try{
-        const employees = await getAllEmployeesService()
+        const employees = await getEmployeesSchedulingService()
         setRows(employees)
       } catch(error){
         console.error(error)

@@ -1,15 +1,15 @@
 const API_URL = import.meta.env.VITE_APP_API_URL
 
-const createShiftService = async (shift_data, process_id) => {
+const assignShiftToEmployeeService = async (shiftId, batchId, employee_id) => {
     try {
-        const response = await fetch(`${API_URL}/shifts/create/${process_id}`, {
+        const response = await fetch(`${API_URL}/employees/assign-shift/${employee_id}`, {
             method: 'POST',
             headers: {
                 'Authorization': localStorage.getItem('token'),
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(shift_data),
+            body: JSON.stringify({ shiftId, batchId })
         });
         let data;
         try {
@@ -29,4 +29,4 @@ const createShiftService = async (shift_data, process_id) => {
     }
 }
 
-export default createShiftService;
+export default assignShiftToEmployeeService;

@@ -8,6 +8,8 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import z from "zod";
 import { v4 } from "uuid";
 import { useAuth } from "./AuthContext";
+import getShiftsService from "@/services/shiftServices/getShiftsService";
+import getShiftBatchesService from "@/services/shiftServices/getShiftBatchesService";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
@@ -408,6 +410,45 @@ export const AppProvider = ({ children }) => {
         },
       }
     })
+
+    const [assignShiftFields, setAssignShiftFields] = useState({
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        dependOn: null,
+        getOptions: getAllDepartmentsService,
+        validation: z.string()
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: 'department_id',
+        getOptions: getDepartmentProcessesService,
+        validation: z.string()
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: 'process_id',
+        getOptions: getShiftsService,
+        validation: z.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: 'shift_id',
+        getOptions: getShiftBatchesService,
+        validation: z.number()
+      },
+    })
     return (
         <AppContext.Provider value={{
             employeeFields,
@@ -422,6 +463,8 @@ export const AppProvider = ({ children }) => {
             setProcessFields,
             shiftFields,
             setShiftFields,
+            assignShiftFields,
+            setAssignShiftFields,
             refreshFormUuid
         }}>
             {children}
