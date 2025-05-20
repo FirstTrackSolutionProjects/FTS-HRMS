@@ -1,5 +1,5 @@
 import { MdDashboardCustomize } from "react-icons/md";
-import { FaHome, FaUsers } from "react-icons/fa";
+import { FaClock, FaHome, FaUsers } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -19,6 +19,8 @@ import ManageBranch from "@/components/Dashboard/Organization/ManageBranch/Manag
 import ManageDepartment from "@/components/Dashboard/Organization/ManageDepartment/ManageDepartment";
 import Operation from "@/components/Dashboard/Operation/Operation";
 import PayrollPolicy from "@/components/Dashboard/Organization/PayrollPolicy/PayrollPolicy";
+import ManageShifts from "@/components/Dashboard/Organization/ManageShifts/ManageShifts";
+import EmployeeScheduling from "@/components/Dashboard/Operation/EmployeeScheduling/EmployeeScheduling";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -146,6 +148,13 @@ export const organizationServices = [
         title: 'Attendance Policy',
         description: 'Attendance Management System',
         icon: FaRegCalendarAlt
+    },
+    {
+        title: 'Shift Manage',
+        description: 'Manage shifts of employees',
+        to: 'shifts',
+        icon: FaClock,
+        component: ManageShifts
     }
 ]
 
@@ -171,5 +180,12 @@ export const operationServices = [
         title: 'Attendance',
         description: 'Attendance Management System',
         icon: FaRegCalendarAlt
+    },
+    {
+        title: 'Employee Scheduling',
+        description: 'Employee Scheduling System',
+        to: 'scheduling',
+        icon: FaClock,
+        component: EmployeeScheduling
     }
 ]

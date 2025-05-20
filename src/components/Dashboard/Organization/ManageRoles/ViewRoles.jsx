@@ -44,7 +44,7 @@ const ViewRoles = () => {
           setDeleteRolePopupOpen((prev)=>!prev)
         }
         const handleDeleteRoleEvent = () => {
-          setUpdateRolePopupOpen(false)
+          setDeleteRolePopupOpen(false)
           getAllRoles()
         }
 
