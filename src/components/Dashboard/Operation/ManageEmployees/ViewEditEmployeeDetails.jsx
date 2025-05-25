@@ -25,7 +25,7 @@ const ViewEditEmployeeDetails = ({
     const getEmployee = async ()=>{
         try{
             const data = await getEmployeeService(employeeId);
-            employeeFormRef?.current?.setFormData(data);
+            employeeFormRef?.current?.initializeFormData(data);
         } catch (err) {
             toast.error("Failed to get Employee Details")
             onClose();
@@ -37,18 +37,19 @@ const ViewEditEmployeeDetails = ({
         getEmployee();
     },[])
 
-    const [loadingState, setLoadingState] = useState(null)
     const handleSubmit=()=>{
+        employeeFormRef?.current?.setLoadingState('Updating...');
         console.log(employeeData)
+        employeeFormRef?.current?.setLoadingState(null);
     }
     return (
         <ActionPopup open={open} onClose={onClose} title="View/Edit Employee" actions={[
             <CustomButton
-                title={loadingState || 'Update'}
+                title={employeeFormRef?.current?.loadingState || 'Update'}
                 variant="contained"
                 color="primary"
                 size="small"
-                disabled={loadingState?true:false}
+                disabled={employeeFormRef?.current?.loadingState?true:false}
                 onClick={employeeFormRef?.current?.submitForm}
                 sx={{ marginTop: 2, width: '100%' }}
               />

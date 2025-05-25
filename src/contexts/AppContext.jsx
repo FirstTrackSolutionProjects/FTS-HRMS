@@ -8,6 +8,8 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import z from "zod";
 import { v4 } from "uuid";
 import { useAuth } from "./AuthContext";
+import getShiftsService from "@/services/shiftServices/getShiftsService";
+import getShiftBatchesService from "@/services/shiftServices/getShiftBatchesService";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
@@ -17,7 +19,7 @@ export const AppProvider = ({ children }) => {
         setFormUuid(v4());
     }
     const [employeeFields, setEmployeeFields] = useState({
-        photo: { 
+        photo_doc: { 
           required: false, 
           inputType: 'photo', 
           label: "Profile Photo",
@@ -216,7 +218,7 @@ export const AppProvider = ({ children }) => {
           allowedTypes: ['application/pdf'],
           unsupportedTypeMessages: "Only PDF files are supported"
         },
-        roles: {
+        Roles: {
           required: false,
           inputType: 'multiselect',
           label: "Roles",
@@ -299,6 +301,154 @@ export const AppProvider = ({ children }) => {
         label: "Description"
       }
     })
+
+    const [shiftFields, setShiftFields] = useState({
+      id : {
+        required: false,
+        inputType: 'number',
+        hidden: true,
+        label: "ID",
+        validation: z.number().optional(),
+      },
+      department_id: { 
+        required: true, 
+        inputType: 'select', 
+        label: "Department", 
+        options: [],
+        dependOn: null,
+        getOptions: getAllDepartmentsService,
+      },
+      process_id: { 
+        required: true, 
+        inputType: 'select', 
+        label: "Process", 
+        options: [],
+        dependOn: 'department_id',
+        getOptions: getDepartmentProcessesService
+      },
+      name: {
+        required: true,
+        inputType: 'text',
+        label: "Name"
+      },
+      start: {
+        required: true,
+        inputType: 'time',
+        label: "Start Time"
+      },
+      end: {
+        required: true,
+        inputType: 'time',
+        label: "End Time"
+      },
+      work_duration_minutes: {
+        required: true,
+        inputType: 'number',
+        label: "Work Duration (in minutes)",
+        validation: z.coerce.number().int().min(1, "Must be at least 1 minute"),
+      },
+      personal_break_duration_minutes: {
+        required: true,
+        inputType: 'number',
+        label: "Personal Break Duration (in minutes)",
+        validation: z.coerce.number().int().min(0, "Cannot be Negative"),
+      },
+      batches: {
+        required: true,
+        inputType: 'array',
+        label: "Batches",
+        validation: z.array(z.object({
+          id: z.number().optional(),
+          name: z.string(),
+          breaks: z.array(z.object({
+            id: z.number().optional(),
+            name: z.string(),
+            start: z.string(),
+            end: z.string()
+          })).optional()
+        })).min(1, "At least one batch is required"),
+        fields: {
+          id: {
+            required: false,
+            inputType: 'number',
+            label: "ID",
+            hidden: true,
+          },
+          name: {
+            required: true,
+            inputType: 'text',
+            label: "Name"
+          },
+          breaks: {
+            required: false,
+            inputType: 'array',
+            label: "Breaks",
+            fields: {
+              id: {
+                required: false,
+                inputType: 'number',
+                label: "ID",
+                hidden: true
+              },
+              name: {
+                required: true,
+                inputType: 'text',
+                label: "Name"
+              },
+              start: {
+                required: true,
+                inputType: 'time',
+                label: "Start Time"
+              },
+              end: {
+                required: true,
+                inputType: 'time',
+                label: "End Time"
+              },
+            }
+          }
+        },
+      }
+    })
+
+    const [assignShiftFields, setAssignShiftFields] = useState({
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        dependOn: null,
+        getOptions: getAllDepartmentsService,
+        validation: z.string()
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: 'department_id',
+        getOptions: getDepartmentProcessesService,
+        validation: z.string()
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: 'process_id',
+        getOptions: getShiftsService,
+        validation: z.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: 'shift_id',
+        getOptions: getShiftBatchesService,
+        validation: z.number()
+      },
+    })
     return (
         <AppContext.Provider value={{
             employeeFields,
@@ -311,6 +461,10 @@ export const AppProvider = ({ children }) => {
             setDesignationFields,
             processFields,
             setProcessFields,
+            shiftFields,
+            setShiftFields,
+            assignShiftFields,
+            setAssignShiftFields,
             refreshFormUuid
         }}>
             {children}

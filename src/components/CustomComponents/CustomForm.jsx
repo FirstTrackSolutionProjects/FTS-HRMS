@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, createRef } from "react";
-import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, FormLabel, Typography } from "@mui/material";
+import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Typography } from "@mui/material";
 import { toast } from "react-toastify";
 import { MuiFileInput } from 'mui-file-input';
 import MultiSelect from "@/components/CustomComponents/MultiSelect";
@@ -10,20 +10,39 @@ import { z } from "zod";
 import s3FileUploadService from "@/services/s3FileUploadService";
 import ViewIcon from "@/icons/ViewIcon";
 import CustomButton from "./CustomButton";
+import CustomArrayForm from "./CustomArrayForm";
 
-const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={} }, ref) => {
+const bucketUrl = import.meta.env.VITE_APP_BUCKET_URL
+
+const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={}, onChange, viewMode }, ref) => {
 
   const [loadingState, setLoadingState] = useState(null)
+  const formDataRef = useRef(null);
 
-  const [formData, setFormData] = useState(Object.fromEntries(Object.keys(fields).map(key => {
-      if (fields[key].inputType=="multiselect"){
-        return [key, []];
-      }
-      return [key, existingData[key] || ""];
-    })));
+  const initialFormData = useRef()
+
+  const [formData, setFormData] = useState(() => {
+        const initialData = Object.keys(fields).reduce((acc, key) => {
+          if (fields[key].inputType === "multiselect" || fields[key].inputType === "array") {
+            acc[key] = existingData[key] || [];
+          } else if (fields[key].inputType === "select" && existingData[key]) {
+            acc[key] = isNaN(existingData[key]) ? existingData[key] : Number(existingData[key]);
+          } else if (fields[key].inputType === "number") {
+            acc[key] = isNaN(existingData[key]) ? 0 : Number(existingData[key]);
+          } else {
+            acc[key] = existingData[key] || "";
+          }
+          return acc;
+        }, {});
+        formDataRef.current = initialData;
+        initialFormData.current = initialData;
+        return initialData;
+      });
 
     useEffect(()=>{
       console.log(formData)
+      console.log(initialFormData)
+      formDataRef.current = formData;
     },[formData])
 
   const [files, setFiles] = useState(
@@ -56,18 +75,32 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
   const photoFileRef = useRef();
   const [uploadCompleted, setUploadCompleted] = useState(null);
 
+  const initializeFormData = (data) => {
+    setFormData(data);
+    initialFormData.current = data;
+  }
   useImperativeHandle(ref, () => ({
     submitForm: () => validateForm(),
-    formData: formData,
+    formData: {
+      ...formDataRef?.current,
+      ...Object.keys(arrayFormRefs.current).reduce((acc, key) => {
+        if (arrayFormRefs.current[key]?.current) {
+          acc[key] = arrayFormRefs.current[key].current.formsData;
+        }
+        return acc;
+      }, {})
+    },
+    initializeFormData: initializeFormData,
     setFormData: setFormData,
     files: files,
     setFiles: setFiles,
     loadingState: loadingState,
-    setLoadingState: setLoadingState
+    setLoadingState: setLoadingState,
+    arrayFormRefs: arrayFormRefs.current
   }));
 
   useEffect(() => {
-    const changedFields = Object.keys(formData).filter(
+    const changedFields = Object.keys(formDataRef?.current).filter(
       (key) => formData[key] !== prevFormData.current[key]
     );
 
@@ -105,7 +138,9 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
 
   const handleFormDataChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    const newFormData = { ...formData, [name]: value };
+    setFormData(newFormData);
+    onChange?.(newFormData); // Call onChange if provided
   };
 
   const handleFileChange = (value, name) => {
@@ -114,13 +149,18 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
       setFiles((prevFiles) => ({ ...prevFiles, [name]: null }));
       return;
     }
-    setFormData((prevData) => ({ ...prevData, [name]: '' }));
-    setFiles((prevFiles) => ({ ...prevFiles, [name]: value }));
+    if (value){
+      setFormData((prevData) => ({ ...prevData, [name]: '' }));
+      setFiles((prevFiles) => ({ ...prevFiles, [name]: value }));
+    }
   };
 
+  useEffect(() => {
+    console.log(files)
+  },[files])
   const handleUpload = async (name) => {
     try {
-      if (!files[name] || formData[name]) return;
+      if (!files[name] || formDataRef?.current?.[name]) return;
       const key = fields[name].key;
       const file = files[name];
       const filetype = file.type;
@@ -135,9 +175,11 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
 
   const validateForm = () => {
     try {
-      formSchema.parse(formData);
+      console.log(formDataRef?.current)
+      formSchema.parse(formDataRef?.current);
       uploadFiles();
     } catch (err) {
+      console.error(err);
       if (err.errors) {
         err.errors.forEach(error => {
           toast.error(error.message);
@@ -165,7 +207,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
         return;
       }
       const successfulUploads = uploadResults.filter(result => result && result.success);
-      const newFormData = { ...formData };
+      const newFormData = { ...formDataRef?.current };
       successfulUploads.forEach(({ key, value }) => {
         newFormData[key] = value;
       });
@@ -188,15 +230,64 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
   }, [uploadCompleted]);
 
   const fieldRefs = useRef({});
+  const arrayFormRefs = useRef({});
+
+  const handleArrayFormChange = (key, data) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: data
+    }));
+    onChange?.({ ...formData, [key]: data });
+  };
+
+  // Add useEffect to handle existingData changes
+  useEffect(() => {
+    if (existingData && Object.keys(existingData).length > 0) {
+      const newFormData = Object.keys(fields).reduce((acc, key) => {
+        acc[key] = existingData[key] !== undefined ? existingData[key] : formData[key];
+        return acc;
+      }, {});
+      setFormData(newFormData);
+      formDataRef.current = newFormData;
+      initialFormData.current = newFormData;
+    }
+  }, [existingData, viewMode]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: '70%', overflow: 'hidden', padding: 1 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: '70%', overflow: 'auto', padding: 1 }}>
       <Grid container spacing={2}>
         {Object.keys(fields).map((key) => {
           if (!fieldRefs.current[key]) {
             fieldRefs.current[key] = createRef();
           }
           const fieldRef = fieldRefs.current[key];
+          
+          // Skip hidden fields from rendering in the form
+          if (fields[key].hidden) {
+            return null;
+          }
+
+          // Handle array type fields
+          if (fields[key].inputType === 'array') {
+            if (!arrayFormRefs.current[key]) {
+              arrayFormRefs.current[key] = createRef();
+            }
+            return (
+              <Grid item xs={12} key={key}>
+                <Typography variant="subtitle1" sx={{ mb: 1 }}>{fields[key].label}</Typography>
+                <CustomArrayForm
+                  ref={arrayFormRefs.current[key]}
+                  fields={fields[key].fields}
+                  required={fields[key].required}
+                  setFields={setFields}
+                  existingData={formData[key] || []}
+                  viewMode={viewMode}
+                  onChange={(data) => handleArrayFormChange(key, data)}
+                />
+              </Grid>
+            );
+          }
+
           return (
           fields[key].inputType === 'select' ? (
             <Grid item xs={12} sm={6} key={key}>
@@ -206,7 +297,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                   name={key}
                   value={formData[key]}
                   onChange={handleFormDataChange}
-                  disabled={fields[key].disabled || !fields[key]?.options?.length}
+                  disabled={fields[key].disabled || !fields[key]?.options?.length || viewMode}
                   fullWidth
                 >
                   <MenuItem key={'null'} value={''}>{'Select'}</MenuItem>
@@ -219,88 +310,88 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
           ) : fields[key].inputType === 'file' ? (
             <Grid item xs={12} sm={6} key={key}>
               <Typography sx={{fontSize: 13,color: "gray"}}>{`${fields[key].label}${fields[key].required ? '*' : ''}`}</Typography>
-              <Box className="flex"  gap={1}>
-              <MuiFileInput
-                // label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
-                sx={{
-                  display: "none"
-                }}
-                value={files[key]}
-                placeholder={''}
-                ref={fieldRef}
-                name={key}
-                size="small"
-                onChange={(value) => handleFileChange(value, key)}
-                fullWidth
-                clearIconButtonProps={{
-                  title: "Remove",
-                  children: <ClearFieldIcon />
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <FileAttachmentIcon />
-                    </InputAdornment>
-                  )
-                }}
-              />
-              <CustomButton 
-                sx={{
-                 padding: 0,
-                 minWidth:40,
-                 height: 40,
-                 width: "100%"
-                }} 
-                Component={<FileAttachmentIcon />}
-                onClick={() => {
-                  // Trigger the internal file input of MuiFileInput
-                  console.log(fieldRefs)
-                  if (fieldRefs?.current[key]?.current) {
-                    console.log(fieldRefs?.current[key]?.current)
-                    fieldRefs?.current[key]?.current?.querySelector(`input`)?.click()
-                  }
-                }}
-              />
-              <CustomButton 
-                sx={{
-                 padding: 0,
-                 minWidth:40,
-                 height: 40,
-                 width: "100%"
-                }} 
-                disabled={!files[key]}
-                Component={<ClearFieldIcon color="white" />}
-              />
-              <CustomButton 
-                sx={{
-                  padding: 0,
-                 minWidth:40,
-                 height: 40,
-                 width: "100%"
-                }} 
-                disabled={!files[key]}
-                Component={<ViewIcon color="white" />}
-              />
-              <CustomButton 
-                sx={{
-                  padding: 0,
-                 minWidth:40,
-                 height: 40,
-                 width: "100%"
-                }} 
-                disabled={!formData[key]}
-                Component={<FileAttachmentIcon color="white" />}
-              />
+              <Box className="flex" gap={1}>
+                <input
+                  type="file"
+                  style={{ display: 'none' }}
+                  ref={fieldRef}
+                  name={key}
+                  onChange={(e) => handleFileChange(e.target.files[0], key)}
+                />
+                <CustomButton 
+                  sx={{
+                    padding: 0,
+                    minWidth: 40,
+                    height: 40,
+                    width: "100%"
+                  }} 
+                  Component={<FileAttachmentIcon color="white" />}
+                  onClick={() => fieldRef.current?.click()}
+                  disabled={viewMode}
+                />
+                <CustomButton 
+                  sx={{
+                    padding: 0,
+                    minWidth: 40,
+                    height: 40,
+                    width: "100%"
+                  }} 
+                  disabled={!files[key] || viewMode}
+                  Component={<ClearFieldIcon color="white" />}
+                  onClick={() => {
+                    setFiles(prev => ({ ...prev, [key]: null }));
+                    setFormData(prev => ({ ...prev, [key]: "" }));
+                  }}
+                />
+                <CustomButton 
+                  sx={{
+                    padding: 0,
+                    minWidth: 40,
+                    height: 40,
+                    width: "100%"
+                  }} 
+                  disabled={!files[key] || viewMode}
+                  Component={<ViewIcon color="white" />}
+                  onClick={() => {
+                    if (files[key]) {
+                      const url = URL.createObjectURL(files[key]);
+                      window.open(url, '_blank');
+                    }
+                  }}
+                />
+                <CustomButton 
+                  sx={{
+                    padding: 0,
+                    minWidth: 40,
+                    height: 40,
+                    width: "100%"
+                  }} 
+                  disabled={!initialFormData?.current?.[key]}
+                  Component={<FileAttachmentIcon color="white" />}
+                  onClick={() => {
+                    if (initialFormData?.current?.[key]) {
+                      window.open(`${bucketUrl}${initialFormData?.current?.[key]}`, '_blank');
+                    }
+                  }}
+                />
               </Box>
             </Grid>
           ) : fields[key].inputType === 'photo' ? (
             <React.Fragment key={key}>
               <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
                 <img
-                  src={files[key] ? URL.createObjectURL(files[key]) : formData[key] || '/person.webp'}
+                  src={
+                    files[key]
+                      ? URL.createObjectURL(files[key])
+                      : formData[key]
+                      ? `${bucketUrl}${formData[key]}`
+                      : '/person.webp'
+                  }
+                  
                   alt={fields[key].label}
                   style={{ width: 90, maxHeight: 120, borderRadius: 8, cursor: 'pointer' }}
                   onClick={() => {
+                    if (viewMode) return;
                     // Trigger the internal file input of MuiFileInput
                     if (photoFileRef.current) {
                       photoFileRef.current.querySelector('input')?.click();
@@ -344,6 +435,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 variant="outlined"
                 size="small"
                 type="date"
+                disabled={viewMode}
                 name={key}
                 value={formData[key]}
                 onChange={handleFormDataChange}
@@ -351,13 +443,29 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-          ) : fields[key].inputType === "multiselect" ? (
+          ) : fields[key].inputType === "time" ? (
+            <Grid item xs={12} sm={6} key={key}>
+              <TextField
+                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
+                variant="outlined"
+                size="small"
+                type="time"
+                disabled={viewMode}
+                name={key}
+                value={formData[key]}
+                onChange={handleFormDataChange}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+          ): fields[key].inputType === "multiselect" ? (
             <Grid item xs={12} sm={12} key={key}>
               <MultiSelect
                 options={fields[key].options || []}
                 selectedValues={formData[key] || []}
                 setSelectedValues={(values) => setFormData((prevData) => ({ ...prevData, [key]: values }))}
                 label={fields[key].label}
+                disabled={viewMode}
               />
             </Grid>
           ) : (
@@ -366,6 +474,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
                 variant="outlined"
                 size="small"
+                disabled={viewMode}
                 name={key}
                 value={formData[key]}
                 onChange={handleFormDataChange}
