@@ -251,7 +251,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
       formDataRef.current = newFormData;
       initialFormData.current = newFormData;
     }
-  }, [existingData, fields, viewMode]);
+  }, [existingData, viewMode]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: '70%', overflow: 'auto', padding: 1 }}>

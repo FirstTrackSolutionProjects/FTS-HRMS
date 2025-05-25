@@ -21,6 +21,7 @@ import Operation from "@/components/Dashboard/Operation/Operation";
 import PayrollPolicy from "@/components/Dashboard/Organization/PayrollPolicy/PayrollPolicy";
 import ManageShifts from "@/components/Dashboard/Organization/ManageShifts/ManageShifts";
 import EmployeeScheduling from "@/components/Dashboard/Operation/EmployeeScheduling/EmployeeScheduling";
+import ManageAttendance from "@/components/Dashboard/Operation/ManageAttendance/ManageAttendance";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -56,6 +57,12 @@ export const headerNavItems = Object.freeze([
         label: 'Contact Us',
         to: '/contact-us'
     }
+])
+
+export const personalBreaks = Object.freeze([
+    "EMERGENCY BREAK",
+    "REFRESHNESS",
+    "TEA"
 ])
 
 export const sidebarNavItems = Object.freeze([
@@ -179,7 +186,9 @@ export const operationServices = [
     {
         title: 'Attendance',
         description: 'Attendance Management System',
-        icon: FaRegCalendarAlt
+        to: 'attendance',
+        icon: FaRegCalendarAlt,
+        component: ManageAttendance
     },
     {
         title: 'Employee Scheduling',
