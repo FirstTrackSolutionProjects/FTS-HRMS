@@ -20,7 +20,8 @@ const AttendanceButton = () => {
     const [openCamera, setOpenCamera] = useState(false);
     const [capturedImage, setCapturedImage] = useState(null);
     const webcamRef = useRef(null);
-    const [employeeStatus, setEmployeeStatus] = useState({});    const [buttonText, setButtonText] = useState('CHECK IN');
+    const [employeeStatus, setEmployeeStatus] = useState({});    
+    const [buttonText, setButtonText] = useState('CHECK IN');
     
     const { id } = useAuth()
 
