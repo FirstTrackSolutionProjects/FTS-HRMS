@@ -21,11 +21,11 @@ const ViewEditEmployeeDetails = ({
     } = useApp()
 
     const employeeData = employeeFormRef?.current?.formData;
-
+    const [employee, setEmployee] = useState({});
     const getEmployee = async ()=>{
         try{
             const data = await getEmployeeService(employeeId);
-            employeeFormRef?.current?.initializeFormData(data);
+            setEmployee(data);
         } catch (err) {
             toast.error("Failed to get Employee Details")
             onClose();
@@ -59,6 +59,7 @@ const ViewEditEmployeeDetails = ({
               fields={employeeFields} 
               setFields={setEmployeeFields} 
               handleSubmit={handleSubmit}
+              existingData={employee}
               viewEditMode
             />
             {/* <PayrollTable payrollFields={payrollFields} payrollData={payrollData} setPayrollData={setPayrollData} /> */}

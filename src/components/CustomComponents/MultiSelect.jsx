@@ -4,6 +4,10 @@ import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const MultiSelect = ({ options, selectedValues, setSelectedValues, disabled, label, ref }) => {
+  const processedSelectedValues = Array.isArray(selectedValues) ? 
+    (selectedValues[0] && typeof selectedValues[0] === 'object' ? selectedValues.map(v => v.id) : selectedValues) 
+    : [];
+
   return (
     <Autocomplete
       multiple
@@ -16,7 +20,7 @@ const MultiSelect = ({ options, selectedValues, setSelectedValues, disabled, lab
       }}
       disableCloseOnSelect
       getOptionLabel={(option) => option.name}
-      value={options.filter(option => selectedValues.includes(option.id))}
+      value={options.filter(option => processedSelectedValues.some(value => String(value) === String(option.id)))}
       onChange={(event, newValue) => setSelectedValues(newValue.map(option => option.id))}
       renderOption={(props, option, { selected }) => (
         <li {...props}>
