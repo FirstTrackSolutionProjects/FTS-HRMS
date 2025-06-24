@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, createRef } from "react";
-import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Typography } from "@mui/material";
+import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Typography, Switch, FormControlLabel } from "@mui/material";
 import { toast } from "react-toastify";
 import { MuiFileInput } from 'mui-file-input';
 import MultiSelect from "@/components/CustomComponents/MultiSelect";
@@ -14,21 +14,40 @@ import CustomArrayForm from "./CustomArrayForm";
 
 const bucketUrl = import.meta.env.VITE_APP_BUCKET_URL
 
-const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={}, onChange, viewMode }, ref) => {
+const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={}, onChange, viewMode, gridColumns = 12 }, ref) => {
 
   const [loadingState, setLoadingState] = useState(null)
   const formDataRef = useRef(null);
 
   const initialFormData = useRef()
-
   const [formData, setFormData] = useState(() => {
         const initialData = Object.keys(fields).reduce((acc, key) => {
-          if (fields[key].inputType === "multiselect" || fields[key].inputType === "array") {
-            acc[key] = existingData[key] || [];
+          // Get defaultValue or appropriate empty value based on input type
+          const getDefaultValue = (field) => {
+            if (field.defaultValue !== undefined) return field.defaultValue;
+            if (field.inputType === "multiselect" || field.inputType === "array") return [];
+            if (field.inputType === "number") return 0;
+            if (field.inputType === "switch") return false;
+            return "";
+          };          if (fields[key].inputType === "multiselect" || fields[key].inputType === "array") {
+            acc[key] = existingData[key] !== undefined ? existingData[key] : getDefaultValue(fields[key]);
           } else if (fields[key].inputType === "select" && existingData[key]) {
             acc[key] = isNaN(existingData[key]) ? existingData[key] : Number(existingData[key]);
           } else if (fields[key].inputType === "number") {
-            acc[key] = isNaN(existingData[key]) ? 0 : Number(existingData[key]);
+            acc[key] = existingData[key] !== undefined ? Number(existingData[key]) : getDefaultValue(fields[key]);
+          } else if (fields[key].inputType === "switch") {
+            acc[key] = existingData[key] !== undefined ? Boolean(existingData[key]) : getDefaultValue(fields[key]);
+          } else if (fields[key].inputType === "expression") {
+            try {
+              if (typeof fields[key].function === 'function') {
+                acc[key] = fields[key].function(existingData);
+              } else {
+                acc[key] = '';
+              }
+            } catch (error) {
+              console.error(`Error evaluating expression for ${key}:`, error);
+              acc[key] = '';
+            }
           } else {
             acc[key] = existingData[key] || "";
           }
@@ -55,21 +74,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
     );
 
 
-
-  const formSchema = z.object(
-    Object.keys(fields).reduce((schema, key) => {
-      if (fields[key].validation) {
-        schema[key] = fields[key].validation;
-      } else if (fields[key].required) {
-        if (fields[key].inputType === "multiselect") {
-          schema[key] = z.array(z.string()).min(1, `${fields[key].label} is required`);
-        } else {
-          schema[key] = z.string().min(1, `${fields[key].label} is required`);
-        }
-      }
-      return schema;
-    }, {})
-  );
+  
 
   const prevFormData = useRef(formData);
   const photoFileRef = useRef();
@@ -138,7 +143,17 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
 
   const handleFormDataChange = (e) => {
     const { name, value } = e.target;
-    const newFormData = { ...formData, [name]: value };
+    const newFormData = { ...formData, [name]: value };    // Update expression fields that depend on the changed field
+    Object.keys(fields).forEach(key => {
+      if (fields[key].inputType === 'expression' && typeof fields[key].function === 'function') {
+        try {
+          newFormData[key] = fields[key].function(newFormData);
+        } catch (error) {
+          console.error(`Error evaluating expression for ${key}:`, error);
+        }
+      }
+    });
+
     setFormData(newFormData);
     onChange?.(newFormData); // Call onChange if provided
   };
@@ -172,11 +187,39 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
       return { success: false, key: name };
     }
   };
-
   const validateForm = () => {
     try {
-      console.log(formDataRef?.current)
-      formSchema.parse(formDataRef?.current);
+      // Create a copy of current form data
+      const dataToValidate = { ...formDataRef.current };
+      // Remove hidden or conditionally hidden fields from validation and submission
+      Object.keys(fields).forEach(key => {
+        if (fields[key].hidden || (typeof fields[key].conditions === 'function' && !fields[key].conditions(formDataRef.current))) {
+          delete dataToValidate[key];
+        }
+      });
+
+      const formSchema = z.object(
+        Object.keys(fields).reduce((schema, key) => {
+          if (fields[key].hidden || (typeof fields[key].conditions === 'function' && !fields[key].conditions(formDataRef.current))) {
+            return schema;
+          }
+          if (fields[key].validation) {
+            schema[key] = fields[key].validation;
+          } else if (fields[key].required) {
+            if (fields[key].inputType === "multiselect") {
+              schema[key] = z.array(z.string()).min(1, `${fields[key].label} is required`);
+            } else {
+              schema[key] = z.string().min(1, `${fields[key].label} is required`);
+            }
+          }
+          return schema;
+        }, {})
+      );
+      
+      // Validate only visible fields
+      formSchema.parse(dataToValidate);
+      // Only pass visible fields to uploadFiles and submission
+      formDataRef.current = dataToValidate;
       uploadFiles();
     } catch (err) {
       console.error(err);
@@ -253,6 +296,14 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
     }
   }, [existingData, viewMode]);
 
+  const getGridSize = (field) => {
+    const colSpan = field.colSpan || 6; // Default to 6 columns (half width) if not specified
+    return {
+      xs: 12, // Always full width on mobile
+      sm: Math.min(colSpan, gridColumns), // Respect the colSpan but don't exceed gridColumns
+    };
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: '70%', overflow: 'auto', padding: 1 }}>
       <Grid container spacing={2}>
@@ -261,9 +312,31 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
             fieldRefs.current[key] = createRef();
           }
           const fieldRef = fieldRefs.current[key];
-          
-          // Skip hidden fields from rendering in the form
-          if (fields[key].hidden) {
+            // Skip hidden fields and handle conditional rendering
+          if (fields[key].hidden || (typeof fields[key].conditions === 'function' && !fields[key].conditions(formData))) {
+            // If field is hidden by condition, restore its default value
+            if (fields[key].conditions && !fields[key].conditions(formData)) {
+                const defaultValue = fields[key].defaultValue !== undefined
+                  ? fields[key].defaultValue
+                  : fields[key].inputType === "multiselect" || fields[key].inputType === "array" ? []
+                  : fields[key].inputType === "number" ? 0
+                  : fields[key].inputType === "switch" ? false
+                  : "";
+                          
+                // Only update if value is actually different (deep compare for arrays)
+                const isDifferent = Array.isArray(formData[key])
+                  ? JSON.stringify(formData[key]) !== JSON.stringify(defaultValue)
+                  : formData[key] !== defaultValue;
+                          
+                if (isDifferent) {
+                  setTimeout(() => {
+                    setFormData(prev => ({
+                      ...prev,
+                      [key]: defaultValue
+                    }));
+                  }, 0);
+                }
+              }
             return null;
           }
 
@@ -273,7 +346,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
               arrayFormRefs.current[key] = createRef();
             }
             return (
-              <Grid item xs={12} key={key}>
+              <Grid item {...getGridSize(fields[key])} key={key}>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>{fields[key].label}</Typography>
                 <CustomArrayForm
                   ref={arrayFormRefs.current[key]}
@@ -290,7 +363,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
 
           return (
           fields[key].inputType === 'select' ? (
-            <Grid item xs={12} sm={6} key={key}>
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <FormControl fullWidth size="small">
                 <InputLabel sx={{ backgroundColor: 'white' }}>{fields[key].label}{fields[key].required ? '*' : ''}</InputLabel>
                 <Select
@@ -308,9 +381,9 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
               </FormControl>
             </Grid>
           ) : fields[key].inputType === 'file' ? (
-            <Grid item xs={12} sm={6} key={key}>
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <Typography sx={{fontSize: 13,color: "gray"}}>{`${fields[key].label}${fields[key].required ? '*' : ''}`}</Typography>
-              <Box className="flex" gap={1}>
+              <Box sx={{ display: "flex", gap: 1 }}>
                 <input
                   type="file"
                   style={{ display: 'none' }}
@@ -330,6 +403,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                   disabled={viewMode}
                 />
                 <CustomButton 
+                  color={'error'}
                   sx={{
                     padding: 0,
                     minWidth: 40,
@@ -359,7 +433,8 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                     }
                   }}
                 />
-                <CustomButton 
+                <CustomButton
+                  color={'success'} 
                   sx={{
                     padding: 0,
                     minWidth: 40,
@@ -429,7 +504,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
               </Grid>
             </React.Fragment>
           ) : fields[key].inputType === "date" ? (
-            <Grid item xs={12} sm={6} key={key}>
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <TextField
                 label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
                 variant="outlined"
@@ -444,7 +519,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
               />
             </Grid>
           ) : fields[key].inputType === "time" ? (
-            <Grid item xs={12} sm={6} key={key}>
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <TextField
                 label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
                 variant="outlined"
@@ -457,9 +532,8 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 fullWidth
                 InputLabelProps={{ shrink: true }}
               />
-            </Grid>
-          ): fields[key].inputType === "multiselect" ? (
-            <Grid item xs={12} sm={12} key={key}>
+            </Grid>          ): fields[key].inputType === "multiselect" ? (
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <MultiSelect
                 options={fields[key].options || []}
                 selectedValues={formData[key] || []}
@@ -468,8 +542,57 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 disabled={viewMode}
               />
             </Grid>
+          ) : fields[key].inputType === "switch" ? (
+            <Grid item {...getGridSize(fields[key])} key={key}>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={Boolean(formData[key])}
+                    onChange={(e) => {
+                      const { checked } = e.target;
+                      const newFormData = { ...formData, [key]: checked };
+                      setFormData(newFormData);
+                      onChange?.(newFormData);
+                    }}
+                    name={key}
+                    disabled={viewMode}
+                  />
+                }
+                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
+              />
+            </Grid>          
+            ) : fields[key].inputType === "textField" ? (
+            <Grid item {...getGridSize(fields[key])} key={key}>
+              <TextField
+                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
+                variant="outlined"
+                size="small"
+                disabled={viewMode}
+                name={key}
+                value={formData[key]}
+                onChange={handleFormDataChange}
+                fullWidth
+                multiline
+                rows={3}
+                inputProps={{
+                  maxLength: fields[key].maxLength
+                }}
+                helperText={fields[key].maxLength ? `${(formData[key] || '').length}/${fields[key].maxLength}` : undefined}
+              />
+            </Grid>          ) : fields[key].inputType === "expression" ? (
+            <Grid item {...getGridSize(fields[key])} key={key}>
+              <TextField
+                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}                variant="outlined"
+                size="small"
+                disabled={true}
+                name={key}
+                value={formData[key]}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
           ) : (
-            <Grid item xs={12} sm={6} key={key}>
+            <Grid item {...getGridSize(fields[key])} key={key}>
               <TextField
                 label={`${fields[key].label}${fields[key].required ? '*' : ''}`}
                 variant="outlined"

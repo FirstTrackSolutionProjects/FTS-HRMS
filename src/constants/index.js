@@ -1,5 +1,5 @@
 import { MdDashboardCustomize } from "react-icons/md";
-import { FaClock, FaHome, FaUsers } from "react-icons/fa";
+import { FaClock, FaHome, FaUserPlus, FaUsers } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -7,9 +7,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { FaMoneyBill1Wave } from "react-icons/fa6";
 import { RiAdminFill } from "react-icons/ri";
 import Home from "@/components/Dashboard/Home/Home";
-import Users from "@/components/Dashboard/Users/Users";
 import Announcements from "@/components/Dashboard/Announcements/Announcements";
-import Employees from "@/components/Dashboard/Operation/ManageEmployees/Employees";
 import Attendance from "@/components/Dashboard/Attendance/Attendance";
 import Leave from "@/components/Dashboard/Leave/Leave";
 import Payroll from "@/components/Dashboard/Payroll/Payroll";
@@ -22,6 +20,11 @@ import PayrollPolicy from "@/components/Dashboard/Organization/PayrollPolicy/Pay
 import ManageShifts from "@/components/Dashboard/Organization/ManageShifts/ManageShifts";
 import EmployeeScheduling from "@/components/Dashboard/Operation/EmployeeScheduling/EmployeeScheduling";
 import ManageAttendance from "@/components/Dashboard/Operation/ManageAttendance/ManageAttendance";
+import LeavePolicy from "@/components/Dashboard/Organization/LeavePolicy/LeavePolicy";
+import LeaveManagement from "@/components/Dashboard/Operation/LeaveManagement/LeaveManagement";
+import ManageEmployees from "@/components/Dashboard/Operation/ManageEmployees/ManageEmployees";
+import Employees from "@/components/Dashboard/Operation/ManageEmployees/ViewEmployees/Employees";
+import EmployeeOnboarding from "@/components/Dashboard/Operation/ManageEmployees/EmployeeOnboarding/EmployeeOnboarding";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -64,6 +67,11 @@ export const personalBreaks = Object.freeze([
     "REFRESHNESS",
     "TEA"
 ])
+
+export const joinUsRequestStatuses = Object.freeze({
+    PENDING: "PENDING",
+    RECEIVED: "RECEIVED",
+})
 
 export const sidebarNavItems = Object.freeze([
     {
@@ -149,7 +157,9 @@ export const organizationServices = [
     {
         title: 'Leave Policy',
         description: 'Leave Management System',
-        icon: FaPencilAlt
+        to: 'leave-policy',
+        icon: FaPencilAlt,
+        component: LeavePolicy
     },
     {
         title: 'Attendance Policy',
@@ -169,19 +179,23 @@ export const operationServices = [
     {
         title: 'Employees',
         description: 'Manage Employees',
-        to: 'employees',
+        to: 'employees/*',
         icon: FaUsers,
-        component: Employees
+        component: ManageEmployees
     },
     {
         title: 'Payroll',
         description: 'Payroll Management System',
-        icon: FaMoneyBill1Wave
+        to: 'payroll',
+        icon: FaMoneyBill1Wave,
+        component: Payroll
     },
     {
         title: 'Leave Management',
         description: 'Leave Management System',
-        icon: FaPencilAlt
+        to: 'leave-management',
+        icon: FaPencilAlt,
+        component: LeaveManagement
     },
     {
         title: 'Attendance',
@@ -189,6 +203,23 @@ export const operationServices = [
         to: 'attendance',
         icon: FaRegCalendarAlt,
         component: ManageAttendance
+    }
+]
+
+export const manageEmployeeServices = [
+    {
+        title: 'View Employees',
+        description: 'View all employees',
+        to: 'view-employees',
+        icon: FaUsers,
+        component: Employees
+    },
+    {
+        title: 'Employee Onboarding',
+        description: 'Employee Onboarding Process',
+        to: 'employee-onboarding',
+        icon: FaUserPlus,
+        component: EmployeeOnboarding
     },
     {
         title: 'Employee Scheduling',

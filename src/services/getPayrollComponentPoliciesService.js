@@ -16,7 +16,7 @@ const getPayrollComponentPoliciesService = async () => {
             throw new Error(data?.message || 'Failed to fetch payroll policies');
         }
 
-        return data;
+        return data?.data;
     } catch (error) {
         console.error('Error in getPayrollComponentPoliciesService:', error);
         throw error instanceof Error ? error : new Error('Failed to fetch payroll policies');
