@@ -5,16 +5,12 @@ import { useEffect, useMemo, useState } from 'react'
 import CustomButton from '@/components/CustomComponents/CustomButton'
 import { useAuth } from '@/contexts/AuthContext'
 import { PERMISSIONS } from '@/constants'
-import AddEmployees from './AddEmployees'
+// import AddEmployees from './AddEmployees'
 
 import getAllEmployeesService from '@/services/getAllEmployeesService'
 import ViewIcon from '@/icons/ViewIcon'
-import ViewEditEmployeeDetails from './ViewEditEmployeeDetails'
-import ChangeBranchPopup from './ChangeBranchPopup'
-import ChangeDepartmentPopup from './ChangeDepartmentPopup'
-import ChangeDesignationPopup from './ChangeDesignationPopup'
-import ChangeProcessPopup from './ChangeProcessPopup'
-const ViewEmployees = () => {
+// import ViewEditEmployeeDetails from './ViewEditEmployeeDetails'
+const ViewPayrolls = () => {
     const { width } = useWidth()
     const { permissions, checkPermission } = useAuth()
 
@@ -35,56 +31,12 @@ const ViewEmployees = () => {
           // showAllEmployees()
         }
 
-        const [changeBranchPopupOpen, setChangeBranchPopupOpen] = useState(false)
-        const handleChangeBranchPopup = () => {
-          setChangeBranchPopupOpen((prev)=> !prev)
-        }
-        const handleChangeBranchEvent = () => {
-          setChangeBranchPopupOpen(false)
-          showAllEmployees()
-        }
-
-        const [changeDepartmentPopupOpen, setChangeDepartmentPopupOpen] = useState(false)
-        const handleChangeDepartmentPopup = () => {
-          setChangeDepartmentPopupOpen((prev)=> !prev)
-        }
-        const handleChangeDepartmentEvent = () => {
-          setChangeDepartmentPopupOpen(false)
-          showAllEmployees()
-        }
-
-        const [changeDesignationPopupOpen, setChangeDesignationPopupOpen] = useState(false)
-        const handleChangeDesignationPopup = () => {
-          setChangeDesignationPopupOpen((prev)=> !prev)
-        }
-        const handleChangeDesignationEvent = () => {
-          setChangeDesignationPopupOpen(false)
-          showAllEmployees()
-        }
-
-        const [changeProcessPopupOpen, setChangeProcessPopupOpen] = useState(false)
-        const handleChangeProcessPopup = () => {
-          setChangeProcessPopupOpen((prev)=> !prev)
-        }
-        const handleChangeProcessEvent = () => {
-          setChangeProcessPopupOpen(false)
-          showAllEmployees()
-        }
-
         return (
         <>
         <Box className="flex flex-1 items-center h-full" gap={2}>
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleViewEditEmployeeDetailPopup} />}
-          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeBranchPopup} />}
-          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeDepartmentPopup} />}
-          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeDesignationPopup} />}
-          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeProcessPopup} />}
         </Box>
-        <ViewEditEmployeeDetails open={viewEditEmployeeDetailPopupOpen} onClose={handleViewEditEmployeeDetailPopup} onSubmit={handleViewEditEmployeeDetailEvent} employeeId={params?.id}  />
-        <ChangeBranchPopup open={changeBranchPopupOpen} onClose={handleChangeBranchPopup} onSubmit={handleChangeBranchEvent} employeeId={params?.id} />
-        <ChangeDepartmentPopup open={changeDepartmentPopupOpen} onClose={handleChangeDepartmentPopup} onSubmit={handleChangeDepartmentEvent} employeeId={params?.id} />
-        <ChangeDesignationPopup open={changeDesignationPopupOpen} onClose={handleChangeDesignationPopup} onSubmit={handleChangeDesignationEvent} employeeId={params?.id} />
-        <ChangeProcessPopup open={changeProcessPopupOpen} onClose={handleChangeProcessPopup} onSubmit={handleChangeProcessEvent} employeeId={params?.id} />
+        {/* <ViewEditEmployeeDetails open={viewEditEmployeeDetailPopupOpen} onClose={handleViewEditEmployeeDetailPopup} onSubmit={handleViewEditEmployeeDetailEvent} employeeId={params?.id}  /> */}
         </>
       )
     }
@@ -181,9 +133,9 @@ const ViewEmployees = () => {
             fontSize: Math.max(width/100, 15)
         }}
       />
-      <AddEmployees open={addEmployeePopupOpen} onClose={handleAddEmployeePopup} onSubmit={handleAddEmployeeEvent} />
+      {/* <AddEmployees open={addEmployeePopupOpen} onClose={handleAddEmployeePopup} onSubmit={handleAddEmployeeEvent} /> */}
     </Box>
   )
 }
 
-export default ViewEmployees
+export default ViewPayrolls

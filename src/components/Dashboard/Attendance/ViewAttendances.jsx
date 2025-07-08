@@ -2,14 +2,10 @@ import { Box, TextField } from '@mui/material'
 import { DataGrid } from '@mui/x-data-grid'
 import { useWidth } from '@/contexts/WidthContext'
 import { useEffect, useMemo, useState } from 'react'
-import getAllBranchesService from '@/services/getAllBranchesService'
-import CustomButton from '@/components/CustomComponents/CustomButton'
 import { useAuth } from '@/contexts/AuthContext'
-import { PERMISSIONS } from '@/constants'
-import EditIcon from '@/icons/EditIcon'
-import UpdateBranch from '@/components/Dashboard/Organization/ManageBranch/UpdateBranch'
 import AddBranch from '@/components/Dashboard/Organization/ManageBranch/AddBranch'
 import getAllAttendancesService from '@/services/attendanceServices/getAllAttendancesService'
+import getEmployeeAttendanceService from '@/services/attendanceServices/getEmployeeAttendanceService'
 const ViewAttendances = () => {
     const { width } = useWidth()
     const { permissions } = useAuth()
@@ -119,7 +115,7 @@ const ViewAttendances = () => {
     }
 
     const getAllBranches = async () => {
-      const branches = await getAllAttendancesService()
+      const branches = await getEmployeeAttendanceService()
       setRows(branches)
     }
     useEffect(()=> {

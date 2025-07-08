@@ -12,6 +12,8 @@ import getShiftsService from "@/services/shiftServices/getShiftsService";
 import getShiftBatchesService from "@/services/shiftServices/getShiftBatchesService";
 import calculateLeaveDays from "@/helpers/calcLeaveDays";
 import { EMPLOYEE_REGEX } from "@/regex";
+import EmployeeOptionComponent from "@/components/CustomComponents/SelectOptionComponents/EmployeeOptionComponent";
+import getAutocompleteEmployeeListByBatchAndBranchService from "@/services/employeeServices/getEmployeesByBatchService";
 export const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
@@ -62,6 +64,49 @@ export const AppProvider = ({ children }) => {
           required: true,
           inputType: 'text',
           label: "Father's Name",
+        },
+        guardian_name: {
+          inputType: 'text',
+          label: "Guardian's Name",
+        },
+        guardian_relation: {
+          inputType: 'select',
+          label: "Guardian's Relation",
+          options: [],
+          getOptions: () => ([
+            { id: "Brother", name: "Brother" },
+            { id: "Sister", name: "Sister" },
+            { id: "Son", name: "Son" },
+            { id: "Daughter", name: "Daughter" },
+            { id: "Grandfather", name: "Grandfather" },
+            { id: "Grandmother", name: "Grandmother" },
+            { id: "Uncle", name: "Uncle" },
+            { id: "Aunt", name: "Aunt" },
+            { id: "Cousin", name: "Cousin" },
+            { id: "Nephew", name: "Nephew" },
+            { id: "Niece", name: "Niece" },
+            { id: "Father-in-law", name: "Father-in-law" },
+            { id: "Mother-in-law", name: "Mother-in-law" },
+            { id: "Brother-in-law", name: "Brother-in-law" },
+            { id: "Sister-in-law", name: "Sister-in-law" },
+            { id: "Son-in-law", name: "Son-in-law" },
+            { id: "Daughter-in-law", name: "Daughter-in-law" },
+            { id: "Spouse", name: "Spouse" },
+            { id: "Husband", name: "Husband" },
+            { id: "Wife", name: "Wife" },
+            { id: "Stepfather", name: "Stepfather" },
+            { id: "Stepmother", name: "Stepmother" },
+            { id: "Stepbrother", name: "Stepbrother" },
+            { id: "Stepsister", name: "Stepsister" },
+            { id: "Guardian", name: "Guardian" },
+            { id: "Other", name: "Other" }
+          ])
+        },
+        parents_guardian_mobile: {
+          required: true,
+          inputType: 'text',
+          label: "Parents/Guardian's Mobile",
+          validation: z.string().regex(/\d{10}/, "Invalid Mobile Number") 
         },
         age: {
           required: true,
@@ -249,7 +294,7 @@ export const AppProvider = ({ children }) => {
           inputType: 'select', 
           label: "Designation", 
           options: [],
-          dependOn: 'department_id',
+          dependOn: ['department_id'],
           getOptions: getDepartmentDesignationsService
         },
         process_id: { 
@@ -257,7 +302,7 @@ export const AppProvider = ({ children }) => {
           inputType: 'select', 
           label: "Process", 
           options: [],
-          dependOn: 'department_id',
+          dependOn: ['department_id'],
           getOptions: getDepartmentProcessesService
         },
         branch_id: {
@@ -445,7 +490,7 @@ export const AppProvider = ({ children }) => {
         inputType: 'select', 
         label: "Process", 
         options: [],
-        dependOn: 'department_id',
+        dependOn: ['department_id'],
         getOptions: getDepartmentProcessesService
       },
       name: {
@@ -552,7 +597,7 @@ export const AppProvider = ({ children }) => {
         inputType: 'select',
         label: "Process",
         options: [],
-        dependOn: 'department_id',
+        dependOn: ['department_id'],
         getOptions: getDepartmentProcessesService,
         validation: z.string()
       },
@@ -561,7 +606,7 @@ export const AppProvider = ({ children }) => {
         inputType: 'select',
         label: "Shift",
         options: [],
-        dependOn: 'process_id',
+        dependOn: ['process_id'],
         getOptions: getShiftsService,
         validation: z.number()
       },
@@ -570,7 +615,7 @@ export const AppProvider = ({ children }) => {
         inputType: 'select',
         label: "Batch",
         options: [],
-        dependOn: 'shift_id',
+        dependOn: ['shift_id'],
         getOptions: getShiftBatchesService,
         validation: z.number()
       },
@@ -642,7 +687,7 @@ export const AppProvider = ({ children }) => {
       reason: {
         required: true,
         inputType: 'textField',
-        maxLength: 100,
+        maxLength: 250,
         label: "Reason",
         colSpan: 12
       },
@@ -703,7 +748,7 @@ export const AppProvider = ({ children }) => {
       leave_reason: {
         required: true,
         inputType: 'textField',
-        maxLength: 100,
+        maxLength: 250,
         label: "Reason"
       },
       supporting_document: {
@@ -783,6 +828,49 @@ export const AppProvider = ({ children }) => {
           required: true,
           inputType: 'text',
           label: "Father's Name",
+        },
+        guardian_name: {
+          inputType: 'text',
+          label: "Guardian's Name",
+        },
+        guardian_relation: {
+          inputType: 'select',
+          label: "Guardian's Relation",
+          options: [],
+          getOptions: () => ([
+            { id: "Brother", name: "Brother" },
+            { id: "Sister", name: "Sister" },
+            { id: "Son", name: "Son" },
+            { id: "Daughter", name: "Daughter" },
+            { id: "Grandfather", name: "Grandfather" },
+            { id: "Grandmother", name: "Grandmother" },
+            { id: "Uncle", name: "Uncle" },
+            { id: "Aunt", name: "Aunt" },
+            { id: "Cousin", name: "Cousin" },
+            { id: "Nephew", name: "Nephew" },
+            { id: "Niece", name: "Niece" },
+            { id: "Father-in-law", name: "Father-in-law" },
+            { id: "Mother-in-law", name: "Mother-in-law" },
+            { id: "Brother-in-law", name: "Brother-in-law" },
+            { id: "Sister-in-law", name: "Sister-in-law" },
+            { id: "Son-in-law", name: "Son-in-law" },
+            { id: "Daughter-in-law", name: "Daughter-in-law" },
+            { id: "Spouse", name: "Spouse" },
+            { id: "Husband", name: "Husband" },
+            { id: "Wife", name: "Wife" },
+            { id: "Stepfather", name: "Stepfather" },
+            { id: "Stepmother", name: "Stepmother" },
+            { id: "Stepbrother", name: "Stepbrother" },
+            { id: "Stepsister", name: "Stepsister" },
+            { id: "Guardian", name: "Guardian" },
+            { id: "Other", name: "Other" }
+          ])
+        },
+        parents_guardian_mobile: {
+          required: true,
+          inputType: 'text',
+          label: "Parents/Guardian's Mobile",
+          validation: z.string().regex(/\d{10}/, "Invalid Mobile Number") 
         },
         age: {
           required: true,
@@ -1059,7 +1147,7 @@ export const AppProvider = ({ children }) => {
         inputType: 'select',
         label: "Designation",
         options: [],
-        dependOn: 'department_id',
+        dependOn: ['department_id'],
         getOptions: getDepartmentDesignationsService
       },
       process_id: {
@@ -1067,19 +1155,419 @@ export const AppProvider = ({ children }) => {
         inputType: 'select',
         label: "Process",
         options: [],
+        dependOn: ['department_id'],
         getOptions: getDepartmentProcessesService
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
       },
       date_of_joining: {
         required: true,
         inputType: 'date',
         label: "Date of Joining"
       },
-      probation_ends_at: {
+      probation_period: {
         required: true,
-        inputType: 'date',
-        label: "Probation Ends At"
+        inputType: 'text',
+        label: "Probation Period (In Days)",
+        validation: z.string().regex(/^\d{1,3}$/, 'Probation Period should be a number')
+      },
+      remarks: {
+        required: true,
+        inputType: 'textarea',
+        label: "Remarks",
+        maxLength: 250,
+        colSpan: 12
       }
     })
+
+    const [reviseEmployeeOnboardingFields, setReviseEmployeeOnboardingFields] = useState({
+      branch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Branch",
+        options: [],
+        getOptions: getAllBranchesService
+      },
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        getOptions: getAllDepartmentsService
+      },
+      designation_id: {
+        required: true,
+        inputType: 'select',
+        label: "Designation",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentDesignationsService
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentProcessesService
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
+      },
+      date_of_joining: {
+        required: true,
+        inputType: 'date',
+        label: "Date of Joining"
+      },
+      probation_period: {
+        required: true,
+        inputType: 'text',
+        label: "Probation Period (In Days)",
+        validation: z.string().regex(/^\d{1,3}$/, 'Probation Period should be a number')
+      },
+      remarks: {
+        required: true,
+        inputType: 'textarea',
+        label: "Remarks",
+        maxLength: 250,
+        colSpan: 12
+      },
+      reason: {
+        required: true,
+        inputType: 'textarea',
+        label: "Reason for revision",
+        maxLength: 250,
+        colSpan: 12
+      }
+    })
+
+    const [assignTrainingFields, setAssignTrainingFields] = useState({
+      branch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Branch",
+        options: [],
+        getOptions: getAllBranchesService
+      },
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        getOptions: getAllDepartmentsService
+      },
+      designation_id: {
+        required: true,
+        inputType: 'select',
+        label: "Designation",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentDesignationsService
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentProcessesService
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
+      },
+      start_date: {
+        required: true,
+        inputType: 'date',
+        label: "Start Date"
+      },
+      end_date: {
+        required: true,
+        inputType: 'date',
+        label: "End Date"
+      },
+      trainer_id: {
+        required: true,
+        inputType: 'autocomplete',
+        label: "Trainer",
+        component: EmployeeOptionComponent,
+        options: [],
+        dependOn: [],
+        getOptions: getAutocompleteEmployeeListByBatchAndBranchService,
+        colSpan: 12
+      },
+      remarks: {
+        required: true,
+        inputType: 'textField',
+        maxLength: 250,
+        label: "Additional Details",
+        colSpan: 12
+      },
+    })
+
+    const [reviseTrainingFields, setReviseTrainingFields] = useState({
+      branch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Branch",
+        options: [],
+        getOptions: getAllBranchesService
+      },
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        getOptions: getAllDepartmentsService
+      },
+      designation_id: {
+        required: true,
+        inputType: 'select',
+        label: "Designation",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentDesignationsService
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentProcessesService
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
+      },
+      start_date: {
+        required: true,
+        inputType: 'date',
+        label: "Start Date"
+      },
+      end_date: {
+        required: true,
+        inputType: 'date',
+        label: "End Date"
+      },
+      trainer_id: {
+        required: true,
+        inputType: 'autocomplete',
+        label: "Trainer",
+        component: EmployeeOptionComponent,
+        options: [],
+        dependOn: [],
+        getOptions: getAutocompleteEmployeeListByBatchAndBranchService,
+        colSpan: 12
+      },
+      remarks: {
+        required: true,
+        inputType: 'textField',
+        maxLength: 250,
+        label: "Additional Details",
+        colSpan: 12
+      },
+      reason: {
+        required: true,
+        inputType: 'textField',
+        maxLength: 250,
+        label: "Reason for revision",
+        colSpan: 12
+      }
+    })
+
+    const [changeBranchFields,  setChangeBranchFields] = useState({
+      branch_id: {
+        required: true,
+        inputType: 'select',
+        label: "New Branch",
+        options: [],
+        dependOn: [],
+        getOptions: getAllBranchesService,
+        colSpan: 12
+      }
+    })
+
+    const [changeDepartmentFields, setChangeDepartmentFields] = useState({
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        dependOn: [],
+        getOptions: getAllDepartmentsService,
+      },
+      designation_id: {
+        required: true,
+        inputType: 'select',
+        label: "Designation",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentDesignationsService,
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentProcessesService,
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
+      }
+    })
+
+    const [changeDesignationFields, setChangeDesignationFields] = useState({
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        dependOn: [],
+        getOptions: getAllDepartmentsService,
+        hidden: true
+      },
+      designation_id: {
+        required: true,
+        inputType: 'select',
+        label: "Designation",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentDesignationsService,
+      }
+    })
+
+    const [changeProcessFields, setChangeProcessFields] = useState({
+      department_id: {
+        required: true,
+        inputType: 'select',
+        label: "Department",
+        options: [],
+        dependOn: [],
+        getOptions: getAllDepartmentsService,
+        hidden: true
+      },
+      process_id: {
+        required: true,
+        inputType: 'select',
+        label: "Process",
+        options: [],
+        dependOn: ['department_id'],
+        getOptions: getDepartmentProcessesService,
+      },
+      shift_id: {
+        required: true,
+        inputType: 'select',
+        label: "Shift",
+        options: [],
+        dependOn: ['process_id'],
+        getOptions: getShiftsService,
+        validation: z.coerce.number()
+      },
+      batch_id: {
+        required: true,
+        inputType: 'select',
+        label: "Batch",
+        options: [],
+        dependOn: ['shift_id'],
+        getOptions: getShiftBatchesService,
+        validation: z.coerce.number()
+      }
+    })
+
+    const [applyResignationFields, setApplyResignationFields] = useState({
+      content: {
+        required: true,
+        inputType: 'textField',
+        maxLength: 2000,
+        label: "Resignation Application",
+        colSpan: 12
+      },
+      supporting_document: {
+        required: false,
+        inputType: 'file',
+        label: "Supporting Document",
+        key: `employee/${employeeId}/resignation-application-docs/${formUuid}`,
+        allowedTypes: ['application/pdf'],
+        unsupportedTypeMessages: "Only PDF files are supported"
+      }
+    })
+
     ///////////////////////////////////////FORM FIELDS//////////////////////////////////////
 
     /////////////////////////////////////FILTER FIELDS//////////////////////////////////////
@@ -1163,6 +1651,22 @@ export const AppProvider = ({ children }) => {
             setNegativeJoinUsRequestConfirmationFields,
             employeeOnboardingFields,
             setEmployeeOnboardingFields,
+            reviseEmployeeOnboardingFields,
+            setReviseEmployeeOnboardingFields,
+            assignTrainingFields,
+            setAssignTrainingFields,
+            reviseTrainingFields,
+            setReviseTrainingFields,
+            changeBranchFields,
+            setChangeBranchFields,
+            changeDepartmentFields,
+            setChangeDepartmentFields,
+            changeDesignationFields,
+            setChangeDesignationFields,
+            changeProcessFields,
+            setChangeProcessFields,
+            applyResignationFields,
+            setApplyResignationFields,
             joinUsRequestFilter,
             setJoinUsRequestFilter,
             refreshFormUuid

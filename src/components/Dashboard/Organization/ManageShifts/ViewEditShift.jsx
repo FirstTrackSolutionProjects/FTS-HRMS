@@ -42,7 +42,7 @@ const ViewEditShift = ({ open, onClose, onSubmit, shiftId }) => {
         console.log(formData)
         
         try {
-            await updateShiftService(formData?.id, formData);
+            await updateShiftService(shiftId, formData);
             toast.success("Shift updated successfully")
             onSubmit()
         } catch (err) {

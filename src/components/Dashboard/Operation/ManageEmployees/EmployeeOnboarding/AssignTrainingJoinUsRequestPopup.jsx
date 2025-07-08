@@ -5,12 +5,12 @@ import ActionPopup from "@/components/CustomComponents/ActionPopup"
 import CustomForm from "@/components/CustomComponents/CustomForm"
 import { useApp } from "@/contexts/AppContext"
 import { Box } from "@mui/material"
-import onboardEmployeeJoinUsRequestService from "@/services/joinUsRequestServices/onboardEmployeeJoinUsRequestService"
+import assignTrainingJoinUsRequestService from "@/services/joinUsRequestServices/assignTrainingJoinUsRequestService"
 
-const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
+const AssignTrainingJoinUsRequestPopup = ({ open, onClose, onSubmit, requestId }) => {
     if (!open) return;
 
-    const {employeeOnboardingFields, setEmployeeOnboardingFields} = useApp();
+    const {assignTrainingFields, setAssignTrainingFields} = useApp();
     const formRef = useRef();
 
     const handleSubmit = async () => {
@@ -18,11 +18,11 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
         console.log(formData)
         
         try {
-            await onboardEmployeeJoinUsRequestService(formData, requestId);
-            toast.success("Employee onboarded successfully")
+            await assignTrainingJoinUsRequestService(formData, requestId);
+            toast.success("Training assigned successfully");
             onSubmit()
         } catch (err) {
-            toast.error(err?.message || "Failed to onboard employee")
+            toast.error(err?.message || "Failed to assign training");
         }
     }
 
@@ -30,10 +30,10 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
         <ActionPopup
             open={open}
             onClose={onClose}
-            title="Onboard Employee"
+            title="Assign Training"
             actions={[
                 <CustomButton
-                    title="Onboard"
+                    title="Assign"
                     variant="contained"
                     color="primary"
                     size="small"
@@ -45,8 +45,8 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <CustomForm
                     ref={formRef}
-                    fields={employeeOnboardingFields}
-                    setFields={setEmployeeOnboardingFields}
+                    fields={assignTrainingFields}
+                    setFields={setAssignTrainingFields}
                     handleSubmit={handleSubmit}
                 />
             </Box>
@@ -54,4 +54,4 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
     )
 }
 
-export default EmployeeOnboardingPopup
+export default AssignTrainingJoinUsRequestPopup

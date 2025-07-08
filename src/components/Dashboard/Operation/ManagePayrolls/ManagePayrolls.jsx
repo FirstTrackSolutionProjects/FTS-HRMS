@@ -2,15 +2,15 @@ import { Stack } from '@mui/material'
 import ComponentTitle from '@/components/CustomComponents/ComponentTitle'
 import ViewPayrolls from './ViewPayrolls'
 
-const Payroll = () => {
+const ManagePayrolls = () => {
   return (
     <>
         <Stack gap={4}>
-            <ComponentTitle title={`Payroll`} />
+            <ComponentTitle title={`Manage payrolls`} />
             <ViewPayrolls />
         </Stack>
     </>
   )
 }
 
-export default Payroll
+export default ManagePayrolls
