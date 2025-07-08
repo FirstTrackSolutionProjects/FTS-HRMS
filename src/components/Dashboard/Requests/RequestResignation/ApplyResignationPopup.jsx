@@ -5,12 +5,12 @@ import ActionPopup from "@/components/CustomComponents/ActionPopup"
 import CustomForm from "@/components/CustomComponents/CustomForm"
 import { useApp } from "@/contexts/AppContext"
 import { Box } from "@mui/material"
-import onboardEmployeeJoinUsRequestService from "@/services/joinUsRequestServices/onboardEmployeeJoinUsRequestService"
+import applyResignationService from "@/services/exitServices/resignationServices/applyResignationService"
 
-const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
+const ApplyResignationPopup = ({ open, onClose, onSubmit}) => {
     if (!open) return;
 
-    const {employeeOnboardingFields, setEmployeeOnboardingFields} = useApp();
+    const {applyResignationFields, setApplyResignationFields} = useApp();
     const formRef = useRef();
 
     const handleSubmit = async () => {
@@ -18,11 +18,11 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
         console.log(formData)
         
         try {
-            await onboardEmployeeJoinUsRequestService(formData, requestId);
-            toast.success("Employee onboarded successfully")
+            await applyResignationService(formData);
+            toast.success("Resignation applied successfully")
             onSubmit()
         } catch (err) {
-            toast.error(err?.message || "Failed to onboard employee")
+            toast.error(err?.message || "Failed to apply resignation")
         }
     }
 
@@ -30,10 +30,10 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
         <ActionPopup
             open={open}
             onClose={onClose}
-            title="Onboard Employee"
+            title="Apply Resignation"
             actions={[
                 <CustomButton
-                    title="Onboard"
+                    title="Apply Resignation"
                     variant="contained"
                     color="primary"
                     size="small"
@@ -45,8 +45,8 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <CustomForm
                     ref={formRef}
-                    fields={employeeOnboardingFields}
-                    setFields={setEmployeeOnboardingFields}
+                    fields={applyResignationFields}
+                    setFields={setApplyResignationFields}
                     handleSubmit={handleSubmit}
                 />
             </Box>
@@ -54,4 +54,4 @@ const EmployeeOnboardingPopup = ({ open, onClose, onSubmit, requestId }) => {
     )
 }
 
-export default EmployeeOnboardingPopup
+export default ApplyResignationPopup

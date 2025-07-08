@@ -21,7 +21,7 @@ import {
   LinearProgress
 } from "@mui/material";
 import CustomForm from "@/components/CustomComponents/CustomForm";
-import createEmployeeService from "@/services/createEmployeeService";
+import createEmployeeService from "@/services/employeeServices/createEmployeeService";
 import getPayrollComponentPoliciesService from "@/services/getPayrollComponentPoliciesService";
 import { useApp } from "@/contexts/AppContext";
 

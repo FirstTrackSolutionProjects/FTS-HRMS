@@ -1,10 +1,14 @@
-import React from 'react'
+import { Stack } from "@mui/material"
+import ComponentTitle from "@/components/CustomComponents/ComponentTitle"
+import ViewAttendances from "./ViewAttendances"
+
 
 const Attendance = () => {
   return (
-    <div>
-      Attendance
-    </div>
+    <Stack gap={4}>
+      <ComponentTitle title={`Attendance Report`} />
+      <ViewAttendances />
+    </Stack>
   )
 }
 

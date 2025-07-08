@@ -1,5 +1,5 @@
 import { MdDashboardCustomize } from "react-icons/md";
-import { FaClock, FaHome, FaUserPlus, FaUsers } from "react-icons/fa";
+import { FaClock, FaFile, FaHome, FaUserMinus, FaUserPlus, FaUsers } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -25,6 +25,11 @@ import LeaveManagement from "@/components/Dashboard/Operation/LeaveManagement/Le
 import ManageEmployees from "@/components/Dashboard/Operation/ManageEmployees/ManageEmployees";
 import Employees from "@/components/Dashboard/Operation/ManageEmployees/ViewEmployees/Employees";
 import EmployeeOnboarding from "@/components/Dashboard/Operation/ManageEmployees/EmployeeOnboarding/EmployeeOnboarding";
+import Requests from "@/components/Dashboard/Requests/Requests";
+import RequestResignation from "@/components/Dashboard/Requests/RequestResignation/RequestResignation";
+import ManagePayrolls from "@/components/Dashboard/Operation/ManagePayrolls/ManagePayrolls";
+import ExitManagement from "@/components/Dashboard/Operation/ExitManagement/ExitManagement";
+import ResignationRequests from "@/components/Dashboard/Operation/ExitManagement/ResignationRequests/ResignationRequests";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -86,28 +91,35 @@ export const sidebarNavItems = Object.freeze([
         to: '/announcements',
         icon: TfiAnnouncement,
         component: Announcements,
-        permissions: [PERMISSIONS.AUDIT_ANNOUNCEMENT]
+        permissions: []
     },
     {
         label: 'Attendance',
         to: '/attendance',
         icon: FaRegCalendarAlt,
         component: Attendance,
-        permissions: [PERMISSIONS.AUDIT_ATTENDANCE]
+        permissions: []
     },
     {
         label: 'Leaves',
         to: '/leaves',
         icon: FaPencilAlt,
         component: Leave,
-        permissions: [PERMISSIONS.AUDIT_LEAVE]
+        permissions: []
     },
     {
         label: 'Payroll',
         to: '/payroll',
         icon: FaMoneyBill1Wave,
         component: Payroll,
-        permissions: [PERMISSIONS.AUDIT_PAYROLL]
+        permissions: []
+    },
+    {
+        label: 'Requests',
+        to: '/requests/*',
+        icon: FaFile,
+        component: Requests,
+        permissions: []
     },
     {
         label: 'Operation',
@@ -188,7 +200,7 @@ export const operationServices = [
         description: 'Payroll Management System',
         to: 'payroll',
         icon: FaMoneyBill1Wave,
-        component: Payroll
+        component: ManagePayrolls
     },
     {
         title: 'Leave Management',
@@ -203,6 +215,13 @@ export const operationServices = [
         to: 'attendance',
         icon: FaRegCalendarAlt,
         component: ManageAttendance
+    },
+    {
+        title: 'Exit Management',
+        description: 'Exit Management System',
+        to: 'exit-management/*',
+        icon: FaUserMinus,
+        component: ExitManagement
     }
 ]
 
@@ -227,5 +246,23 @@ export const manageEmployeeServices = [
         to: 'scheduling',
         icon: FaClock,
         component: EmployeeScheduling
+    }
+]
+
+export const requestsServices = [
+    {
+        title: 'Request Resignation',
+        to: 'resignation-requests',
+        icon: FaUserMinus,
+        component: RequestResignation
+    }
+]
+
+export const exitManagementServices = [
+    {
+        title: 'Resignation Requests',
+        to: 'resignation-requests',
+        icon: FaUserMinus,
+        component: ResignationRequests
     }
 ]

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, createRef } from "react";
-import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Typography, Switch, FormControlLabel } from "@mui/material";
+import { Box, Grid, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Typography, Switch, FormControlLabel, Autocomplete } from "@mui/material";
 import { toast } from "react-toastify";
 import { MuiFileInput } from 'mui-file-input';
 import MultiSelect from "@/components/CustomComponents/MultiSelect";
@@ -11,10 +11,11 @@ import s3FileUploadService from "@/services/s3FileUploadService";
 import ViewIcon from "@/icons/ViewIcon";
 import CustomButton from "./CustomButton";
 import CustomArrayForm from "./CustomArrayForm";
+import CustomAutocomplete from "./CustomAutocomplete";
 
 const bucketUrl = import.meta.env.VITE_APP_BUCKET_URL
 
-const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={}, onChange, viewMode, gridColumns = 12 }, ref) => {
+const CustomForm = forwardRef(({ fields, setFields, handleSubmit = ()=>{}, existingData={}, onChange, viewMode, gridColumns = 12 }, ref) => {
 
   const [loadingState, setLoadingState] = useState(null)
   const formDataRef = useRef(null);
@@ -72,11 +73,20 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
           return acc;
         }, {})
     );
-
+  
+    const [searchData, setSearchData] = useState(
+      Object.keys(fields)
+        .filter((key) =>  [ "autocomplete"].includes(fields[key]?.inputType))
+        .reduce((acc, key) => {
+          acc[key] = "";
+          return acc;
+        }, {})
+    );
 
   
 
   const prevFormData = useRef(formData);
+  const prevSearchData = useRef(searchData);
   const photoFileRef = useRef();
   const [uploadCompleted, setUploadCompleted] = useState(null);
 
@@ -105,17 +115,24 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
   }));
 
   useEffect(() => {
+    console.log(searchData)
     const changedFields = Object.keys(formDataRef?.current).filter(
       (key) => formData[key] !== prevFormData.current[key]
     );
-
-    if (changedFields.length > 0) {
+    const changedSearchDataFields = Object.keys(searchData).filter(
+      (key) => searchData[key] !== prevSearchData.current[key]
+    );
+    if (changedFields.length > 0 || changedSearchDataFields.length > 0) {
       Object.keys(fields).forEach(async (key) => {
-        if (["select", "multiselect"].includes(fields[key].inputType)) {
-          const dependencyChanged = changedFields.includes(fields[key]?.dependOn);
-          if (dependencyChanged && formData[fields[key]?.dependOn]) {
+        if (["select", "multiselect", "autocomplete"].includes(fields[key].inputType)) {
+          if (fields[key]?.dependOn?.some(dep => !formData[dep])){
+            return;
+          }
+          const dependencyChanged = fields[key]?.dependOn?.some(dep => changedFields.includes(dep));
+          if (dependencyChanged || (fields[key].inputType == "autocomplete")) {
             try {
-              const options = await fields[key].getOptions(formData[fields[key]?.dependOn]);
+              const dependencyValues = fields[key]?.dependOn?.map(dep => formData[dep]);
+              const options = await fields[key].getOptions(...dependencyValues, searchData[key]);
               setFields((prevData) => ({ ...prevData, [key]: { ...prevData[key], options } }));
             } catch (err) {
               toast.error(`Failed to fetch ${fields[key].label}`);
@@ -126,11 +143,12 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
     }
 
     prevFormData.current = formData;
-  }, [formData]);
+    prevSearchData.current = searchData;
+  }, [formData, searchData]);
 
   useEffect(() => {
     Object.keys(fields).forEach(async (key) => {
-      if (["select", "multiselect"].includes(fields[key].inputType) && !fields[key]?.dependOn) {
+      if (["select", "multiselect", "autocomplete"].includes(fields[key].inputType) && !fields[key]?.dependOn?.length) {
         try {
           const options = await fields[key].getOptions();
           setFields((prevData) => ({ ...prevData, [key]: { ...prevData[key], options } }));
@@ -255,7 +273,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
         newFormData[key] = value;
       });
       await new Promise(resolve => {
-        setFormData(newFormData);
+        formDataRef.current = newFormData;
         resolve();
       });
       setUploadCompleted(true);
@@ -266,9 +284,20 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
     }
   };
 
+  const handleSubmitAfterUpload = async () => {
+      try{
+        setLoadingState('Submitting Form...');
+        await handleSubmit();
+      } catch (error){
+        toast.error("Failed to submit form");
+      } finally {
+        setLoadingState(null);
+      }
+  }
+
   useEffect(() => {
     if (uploadCompleted) {
-      handleSubmit();
+      handleSubmitAfterUpload();
     }
   }, [uploadCompleted]);
 
@@ -374,9 +403,15 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                   fullWidth
                 >
                   <MenuItem key={'null'} value={''}>{'Select'}</MenuItem>
-                  {fields[key]?.options?.map((option) => (
-                    <MenuItem key={option?.id} value={option?.id}>{option?.name}</MenuItem>
-                  ))}
+                  {fields[key]?.options?.map((option) => {
+                      const OptionComponent = fields[key].component;
+                      const value = option.id;
+                      return (
+                        <MenuItem key={value} value={value}>
+                          {OptionComponent ? <OptionComponent {...option} /> : option.name}
+                        </MenuItem>
+                      );
+                  })}
                 </Select>
               </FormControl>
             </Grid>
@@ -415,6 +450,9 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                   onClick={() => {
                     setFiles(prev => ({ ...prev, [key]: null }));
                     setFormData(prev => ({ ...prev, [key]: "" }));
+                    if (fieldRef.current) {
+                      fieldRef.current.value = "";
+                    }
                   }}
                 />
                 <CustomButton 
@@ -542,6 +580,25 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
                 disabled={viewMode}
               />
             </Grid>
+          ): fields[key].inputType === "autocomplete" ? (
+            <Grid item {...getGridSize(fields[key])} key={key}>
+              <CustomAutocomplete
+                options={fields[key].options || []}
+                value={formData[key]}
+                onChange={handleFormDataChange}
+                name={key}
+                disabled={fields[key].disabled || viewMode}
+                onSearchChange={(value, key) => setSearchData((prev) => ({...prev, [key]: value}))}
+                renderSelected={(value) => {
+                  const OptionComponent = fields[key].component;
+                  return <OptionComponent {...value} />
+                }}
+                renderOption={(option) => {
+                  const OptionComponent = fields[key].component;
+                  return <OptionComponent {...option} />
+                }}
+              />
+            </Grid>
           ) : fields[key].inputType === "switch" ? (
             <Grid item {...getGridSize(fields[key])} key={key}>
               <FormControlLabel
@@ -582,7 +639,8 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit, existingData={
             </Grid>          ) : fields[key].inputType === "expression" ? (
             <Grid item {...getGridSize(fields[key])} key={key}>
               <TextField
-                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}                variant="outlined"
+                label={`${fields[key].label}${fields[key].required ? '*' : ''}`}                
+                variant="outlined"
                 size="small"
                 disabled={true}
                 name={key}

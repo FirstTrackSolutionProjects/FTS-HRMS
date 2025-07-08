@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from "react";
 import {
   Box, Typography, TextField, Table, TableHead, TableRow,
   TableCell, TableBody, Paper, TableContainer, IconButton,
@@ -23,7 +23,11 @@ const EmployeePayrollStructure = forwardRef(({ onSubmit, valueMap = {} }, ref) =
   const [addDialogCategory, setAddDialogCategory] = useState(null);
   const [selectedAddComponentId, setSelectedAddComponentId] = useState("");
 
-  useEffect(() => {
+  const hasInitialized = useRef(false);
+
+useEffect(() => {
+  if (hasInitialized.current) return; // prevent reinitialization
+
   const fetchComponents = async () => {
     const data = await getPayrollComponentPoliciesService();
     const active = data.filter((c) => c.is_active);
@@ -43,10 +47,11 @@ const EmployeePayrollStructure = forwardRef(({ onSubmit, valueMap = {} }, ref) =
 
     setStructure(structureInit);
     setManualValues(manualVals);
+    hasInitialized.current = true; // mark initialized
   };
 
   fetchComponents();
-}, [valueMap]); // 👈 no dependency here
+}, [valueMap]);
 
 
   useEffect(() => {

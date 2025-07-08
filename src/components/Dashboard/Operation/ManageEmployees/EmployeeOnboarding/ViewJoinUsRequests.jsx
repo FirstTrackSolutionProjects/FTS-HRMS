@@ -25,7 +25,11 @@ import RevokeJoinUsRequestPopup from './RevokeJoinUsRequestPopup'
 import ReattemptJoinUsRequestPopup from './ReattemptJoinUsRequestPopup'
 import EmployeeOnboardingPopup from './EmployeeOnboardingPopup'
 import GeneratePayrollPopup from './GeneratePayrollPopup'
-import RevisePayrollPopup from './RevisePayrollPopup'
+import ReviseJoinUsPayrollPopup from './ReviseJoinUsPayrollPopup'
+import AssignTrainingJoinUsRequestPopup from './AssignTrainingJoinUsRequestPopup'
+import ReviseTrainingJoinUsRequestPopup from './ReviseTrainingJoinUsRequestPopup'
+import ReviseEmployeeOnboardingPopup from './ReviseEmployeeOnboardingPopup'
+import EmployeeJoiningPopup from './EmployeeJoiningPopup'
 const ViewJoinUsRequests = () => {
     const { width } = useWidth()
     const { permissions, checkPermission } = useAuth();
@@ -120,6 +124,15 @@ const ViewJoinUsRequests = () => {
           showAllJoinUsRequests()
         }
 
+        const [reviseOnboardJoinUsRequestPopup, setReviseOnboardJoinUsRequestPopup] = useState(false)
+        const handleReviseOnboardJoinUsRequestPopup = () => {
+          setReviseOnboardJoinUsRequestPopup((prev)=> !prev);
+        }
+        const handleReviseOnboardJoinUsRequestEvent = () => {
+          setReviseOnboardJoinUsRequestPopup(false)
+          showAllJoinUsRequests()
+        }
+
         const [generatePayrollPopup, setGeneratePayrollPopup] = useState(false)
         const handleGeneratePayrollPopup = () => {
           setGeneratePayrollPopup((prev)=> !prev);
@@ -147,6 +160,25 @@ const ViewJoinUsRequests = () => {
           showAllJoinUsRequests()
         }
 
+        const [reviseTrainingPopup, setReviseTrainingPopup] = useState(false)
+        const handleReviseTrainingPopup = () => {
+          setReviseTrainingPopup((prev)=> !prev);
+        }
+        const handleReviseTrainingEvent = () => {
+          setReviseTrainingPopup(false)
+          showAllJoinUsRequests()
+        }
+
+        const [employeeJoiningPopup, setEmployeeJoiningPopup] = useState(false)
+        const handleEmployeeJoiningPopup = () => {
+          setEmployeeJoiningPopup((prev)=> !prev);
+        }
+        const handleEmployeeJoiningEvent = () => {
+          setEmployeeJoiningPopup(false)
+          showAllJoinUsRequests()
+        }
+        
+
         return (
         <>
         <Box className="flex flex-1 items-center h-full" gap={2}>
@@ -163,7 +195,7 @@ const ViewJoinUsRequests = () => {
               {<RefreshIcon onClick={handleReattemptJoinUsRequestPopup} />}
             </span>
           }
-          {(["RECEIVED", "PAYROLL GENERATED", "PAYROLL REVISED", "TRAINING STARTED"].includes(params?.row?.status) && !params?.row?.onboarded_at && checkPermission(PERMISSIONS.DELETE_ROLE)) && 
+          {(["RECEIVED", "PAYROLL GENERATED", "PAYROLL REVISED", "TRAINING STARTED", "ONBOARDED"].includes(params?.row?.status) && !params?.row?.onboarded_at && checkPermission(PERMISSIONS.DELETE_ROLE)) && 
             <span data-tooltip-id={`revoke_request`} data-tooltip-place="bottom">
               {<DisableIcon onClick={handleRevokeJoinUsRequestPopup} />}
             </span>
@@ -173,9 +205,19 @@ const ViewJoinUsRequests = () => {
               {<DisableIcon onClick={handleGeneratePayrollPopup} />}
             </span>
           }
-          {(["PAYROLL GENERATED", "PAYROLL REVISED", "TRAINING STARTED", "ONBOARDED"].includes(params?.row?.status)) && 
+          {(["PAYROLL GENERATED", "PAYROLL REVISED", "TRAINING STARTED", "ONBOARDED", "JOINED"].includes(params?.row?.status)) && 
             <span data-tooltip-id={`view_edit_payroll`} data-tooltip-place="bottom">
               {<DisableIcon onClick={handleRevisePayrollPopup} />}
+            </span>
+          }
+          {(["PAYROLL GENERATED"].includes(params?.row?.status)) && 
+            <span data-tooltip-id={`assign_training`} data-tooltip-place="bottom">
+              {<DisableIcon onClick={handleStartTrainingPopup} />}
+            </span>
+          }
+          {(["TRAINING STARTED", "ONBOARDED", "JOINED"].includes(params?.row?.status)) && 
+            <span data-tooltip-id={`view_edit_training`} data-tooltip-place="bottom">
+              {<DisableIcon onClick={handleReviseTrainingPopup} />}
             </span>
           }
           {(params?.row?.status === "TRAINING STARTED" && !params?.row?.onboarded_at && checkPermission(PERMISSIONS.DELETE_ROLE)) && 
@@ -183,13 +225,28 @@ const ViewJoinUsRequests = () => {
               {<EnableIcon onClick={handleOnboardJoinUsRequestPopup} />}
             </span>
           }
+          {(["ONBOARDED", "JOINED"].includes(params?.row?.status) && checkPermission(PERMISSIONS.DELETE_ROLE)) && 
+            <span data-tooltip-id={`view_edit_onboard`} data-tooltip-place="bottom">
+              {<EnableIcon onClick={handleReviseOnboardJoinUsRequestPopup} />}
+            </span>
+          }
+          {
+            (params?.row?.status === "ONBOARDED") &&
+            <span data-tooltip-id={`employee_joining`} data-tooltip-place="bottom">
+              {<EnableIcon onClick={handleEmployeeJoiningPopup} />}
+            </span>
+          }
         </Box>
         <CancelJoinUsRequestPopup open={cancelJoinUsRequestPopup} onClose={handleCancelJoinUsRequestPopup} onSubmit={handleCancelJoinUsRequestEvent} requestId={params?.id} />
         <RevokeJoinUsRequestPopup open={revokeJoinUsRequestPopup} onClose={handleRevokeJoinUsRequestPopup} onSubmit={handleRevokeJoinUsRequestEvent} requestId={params?.id} />
         <ReattemptJoinUsRequestPopup open={reattemptJoinUsRequestPopup} onClose={handleReattemptJoinUsRequestPopup} onSubmit={handleReattemptJoinUsRequestEvent} requestId={params?.id} />
         <GeneratePayrollPopup open={generatePayrollPopup} onClose={handleGeneratePayrollPopup} onSubmit={handleGeneratePayrollEvent} requestId={params?.id} />
-        <RevisePayrollPopup open={revisePayrollPopup} onClose={handleRevisePayrollPopup} onSubmit={handleRevisePayrollEvent} requestId={params?.id} />
+        <ReviseJoinUsPayrollPopup open={revisePayrollPopup} onClose={handleRevisePayrollPopup} onSubmit={handleRevisePayrollEvent} requestId={params?.id} />
+        <AssignTrainingJoinUsRequestPopup open={startTrainingPopup} onClose={handleStartTrainingPopup} onSubmit={handleStartTrainingEvent} requestId={params?.id} />
+        <ReviseTrainingJoinUsRequestPopup open={reviseTrainingPopup} onClose={handleReviseTrainingPopup} onSubmit={handleReviseTrainingEvent} requestId={params?.id} />
         <EmployeeOnboardingPopup open={onboardJoinUsRequestPopup} onClose={handleOnboardJoinUsRequestPopup} onSubmit={handleOnboardJoinUsRequestEvent} requestId={params?.id} />
+        <ReviseEmployeeOnboardingPopup open={reviseOnboardJoinUsRequestPopup} onClose={handleReviseOnboardJoinUsRequestPopup} onSubmit={handleReviseOnboardJoinUsRequestEvent} requestId={params?.id} />
+        <EmployeeJoiningPopup open={employeeJoiningPopup} onClose={handleEmployeeJoiningPopup} onSubmit={handleEmployeeJoiningEvent} requestId={params?.id} />
         <ViewJoinUsRequestSubmission open={viewJoinUsRequestSubmissionPopupOpen} onClose={handleViewJoinUsRequestSubmissionPopup} onSubmit={handleViewJoinUsRequestSubmissionEvent} requestId={params?.id} />
         <Tooltip
           id={`view_submission`}
@@ -226,6 +283,19 @@ const ViewJoinUsRequests = () => {
           place="left"
           className='z-50'
           content={"View/Edit Payroll"}
+        />
+        <Tooltip
+          id={`assign_training`}
+          place="left"
+          className='z-50'
+          content={"Assign Training"}
+        />
+
+        <Tooltip
+          id={`view_edit_training`}
+          place="left"
+          className='z-50'
+          content={"Revise Training"}
         />
         <Tooltip
           id={`onboard`}
