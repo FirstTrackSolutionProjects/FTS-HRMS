@@ -72,6 +72,12 @@ const BasicProfileBanner = () => {
         <Typography variant="body1" className="text-blue-600">
           📞 {profile.mobile}
         </Typography>
+        <Typography variant="body1" className="text-blue-600">
+          Department: {profile.Department.name} ({profile.Department.id})
+        </Typography>
+        <Typography variant="body1" className="text-blue-600">
+          Designation: {profile.Designation.name} ({profile.Designation.id})
+        </Typography>
       </CardContent>
     </Card>
   );

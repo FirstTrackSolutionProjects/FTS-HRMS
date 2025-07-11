@@ -77,6 +77,10 @@ const ViewJoinUsRequests = () => {
       { field: 'last_name', headerName: 'Last Name', width: 150 },
       { field: 'email', headerName: 'Email', width: 150},
       { field: 'mobile', headerName: 'Mobile', width: 150 },
+      { field: 'interviewer_id', headerName: 'Interviewer', width: 150 },
+      { field: 'approver_id', headerName: 'Approved By', width: 150 },
+      { field: 'referral_type', headerName: 'Referral Type', width: 150 },
+      { field: 'referrar', headerName: 'Referrer', width: 150 },
       { field: 'status', headerName: 'Status', width: 150 },
       { field: 'action', headerName: 'Action', width: 150,renderCell: (params) => {
         const [viewJoinUsRequestSubmissionPopupOpen, setViewJoinUsRequestSubmissionPopupOpen] = useState(false)

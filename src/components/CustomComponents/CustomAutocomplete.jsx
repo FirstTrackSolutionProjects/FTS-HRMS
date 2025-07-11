@@ -3,12 +3,12 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ClearFieldIcon from "@/icons/ClearFieldIcon";
 
 export default function CustomAutocomplete({
-  name = "", // 🔸 new prop
+  name = "",
   options = [],
   renderOption,
   renderSelected,
   onChange,
-  onSearchChange = () => {}, // 🔸 callback to expose search text
+  onSearchChange = () => {},
   value = null,
   className = "",
   disabled = false,
@@ -18,12 +18,19 @@ export default function CustomAutocomplete({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selected, setSelected] = useState(value);
+  const [selected, setSelected] = useState(null);
   const wrapperRef = useRef();
 
   useEffect(() => {
-    setSelected(value);
-  }, [value]);
+    if (!value) {
+      setSelected(null);
+    } else if (typeof value === "object") {
+      setSelected(value);
+    } else {
+      const match = options.find((opt) => (opt?.id ?? opt) === value);
+      setSelected(match || null);
+    }
+  }, [value, options]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -35,12 +42,12 @@ export default function CustomAutocomplete({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(()=>{
-    if (!isOpen){
+  useEffect(() => {
+    if (!isOpen) {
       setSearchTerm("");
-      onSearchChange("", name)
+      onSearchChange("", name);
     }
-  },[isOpen])
+  }, [isOpen]);
 
   const filteredOptions = options.filter((opt) =>
     (opt?.title || opt?.name || "")
@@ -48,32 +55,32 @@ export default function CustomAutocomplete({
       .includes(searchTerm.toLowerCase())
   );
 
-  const handleSelect = (opt, name) => {
+  const handleSelect = (opt) => {
     if (disabled || readOnly) return;
     setSelected(opt);
     const event = {
-        target: {
-          name: name,
-          value: opt?.id || opt,
-        }
-      }
-    onChange?.(event)
+      target: {
+        name,
+        value: opt?.id || opt,
+      },
+    };
+    onChange?.(event);
     setSearchTerm("");
-    onSearchChange("", name); // 🔸 clear search externally
+    onSearchChange("", name);
     setIsOpen(false);
   };
 
-  const handleClear = (name) => {
+  const handleClear = () => {
     setSelected(null);
     const event = {
-        target: {
-          name: name,
-          value: "",
-        }
-      }
+      target: {
+        name,
+        value: "",
+      },
+    };
     onChange?.(event);
     setSearchTerm("");
-    onSearchChange("", name); // 🔸 clear search externally
+    onSearchChange("", name);
   };
 
   const defaultRenderOption = (opt) => (
@@ -87,7 +94,9 @@ export default function CustomAutocomplete({
   return (
     <div
       ref={wrapperRef}
-      className={`relative rounded-md ${disabled ? "opacity-50 pointer-events-none" : ""} ${className}`}
+      className={`relative rounded-md ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      } ${className}`}
     >
       {/* Hidden Input to Trigger Focus */}
       <input
@@ -101,7 +110,9 @@ export default function CustomAutocomplete({
       <label
         className={`absolute left-3 transition-all duration-200 pointer-events-none z-10 ${
           selected
-            ? `text-xs -top-2 bg-white ${isOpen ? "text-blue-500" : "text-black"} px-1`
+            ? `text-xs -top-2 bg-white ${
+                isOpen ? "text-blue-500" : "text-black"
+              } px-1`
             : "top-2 text-base text-gray-600"
         }`}
       >
@@ -123,10 +134,9 @@ export default function CustomAutocomplete({
             : null}
         </div>
 
-        {/* Clear Button */}
         {clearable && selected && !readOnly && !disabled && (
           <button
-            onClick={()=>handleClear(name)}
+            onClick={handleClear}
             className="ml-2 text-black hover:text-red-500"
             type="button"
             aria-label="Clear"
@@ -135,7 +145,6 @@ export default function CustomAutocomplete({
           </button>
         )}
 
-        {/* Dropdown Icon */}
         <span
           className={`ml-2 transition-transform duration-200 ${
             isOpen ? "rotate-180" : "rotate-0"
@@ -145,10 +154,8 @@ export default function CustomAutocomplete({
         </span>
       </div>
 
-      {/* Dropdown */}
       {isOpen && (
         <div className="absolute z-10 bottom-0 w-full bg-white rounded-md mt-1 shadow-lg overflow-hidden">
-          {/* Search Input */}
           <div className="bg-white border-[1px] border-gray-500 rounded-t-md px-3 py-2 font-semibold">
             <input
               type="text"
@@ -157,13 +164,12 @@ export default function CustomAutocomplete({
               onChange={(e) => {
                 const text = e.target.value;
                 setSearchTerm(text);
-                onSearchChange(text, name); // 🔸 update parent
+                onSearchChange(text, name);
               }}
               className="w-full bg-transparent outline-none text-black"
             />
           </div>
 
-          {/* Options */}
           <div
             className="max-h-60 overflow-y-auto"
             style={{
@@ -171,12 +177,12 @@ export default function CustomAutocomplete({
               scrollbarColor: "#aaa transparent",
             }}
           >
-            {options.length > 0 ? (
-              options.map((opt, i) => (
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((opt, i) => (
                 <div
                   key={opt.id || i}
                   className="px-4 py-3 border-b border-black cursor-pointer hover:bg-gray-100"
-                  onClick={() => handleSelect(opt, name)}
+                  onClick={() => handleSelect(opt)}
                 >
                   {renderOption?.(opt) || defaultRenderOption(opt)}
                 </div>

@@ -1,8 +1,10 @@
 import { Box } from "@mui/material";
 import SideMenu from "@/components/SideMenu/SideMenu";
-import { Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { sidebarNavItems } from "../constants";
 import { useRoute } from "@/contexts/RouteContext";
+import NotFound from "./NotFound";
+import Profile from "@/components/Dashboard/Profile/Profile";
 
 const Dashboard = () => {
     const { generateRoutes } = useRoute()
@@ -14,6 +16,8 @@ const Dashboard = () => {
             <Box className={`h-screen w-[calc(100vw-64px)] overflow-y-auto overflow-x-hidden `}>
                 <Routes>
                     {generateRoutes(sidebarNavItems)}
+                    <Route path='profile' element={<Profile/>} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </Box>
         </Box>
