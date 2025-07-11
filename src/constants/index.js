@@ -1,5 +1,5 @@
 import { MdDashboardCustomize } from "react-icons/md";
-import { FaClock, FaFile, FaHome, FaUserMinus, FaUserPlus, FaUsers } from "react-icons/fa";
+import { FaBriefcase, FaClock, FaEnvelope, FaFile, FaFileAlt, FaHome, FaUserMinus, FaUserPlus, FaUsers } from "react-icons/fa";
 import { TfiAnnouncement } from "react-icons/tfi";
 import { GoPersonFill } from "react-icons/go";
 import { FaRegCalendarAlt } from "react-icons/fa";
@@ -30,6 +30,9 @@ import RequestResignation from "@/components/Dashboard/Requests/RequestResignati
 import ManagePayrolls from "@/components/Dashboard/Operation/ManagePayrolls/ManagePayrolls";
 import ExitManagement from "@/components/Dashboard/Operation/ExitManagement/ExitManagement";
 import ResignationRequests from "@/components/Dashboard/Operation/ExitManagement/ResignationRequests/ResignationRequests";
+import Submissions from "@/components/Dashboard/Operation/Submissions/Submissions";
+import ContactSubmissions from "@/components/Dashboard/Operation/Submissions/ContactSubmissions/ContactSubmissions";
+import CareerSubmissions from "@/components/Dashboard/Operation/Submissions/CareerSubmissions/CareerSubmissions";
 
 export const PERMISSIONS = Object.freeze({
     AUDIT_JOINUS: 'AUDIT JOINUS',
@@ -222,6 +225,13 @@ export const operationServices = [
         to: 'exit-management/*',
         icon: FaUserMinus,
         component: ExitManagement
+    },
+    {
+        title: 'Submissions',
+        description: 'Manage Submissions',
+        to: 'submissions/*',
+        icon: FaFileAlt,
+        component: Submissions
     }
 ]
 
@@ -264,5 +274,20 @@ export const exitManagementServices = [
         to: 'resignation-requests',
         icon: FaUserMinus,
         component: ResignationRequests
+    }
+]
+
+export const submissionServices = [
+    {
+        title: 'Contact Submissions',
+        to: 'contact-submissions',
+        icon: FaEnvelope,
+        component: ContactSubmissions
+    },
+    {
+        title: 'Career Submissions',
+        to: 'career-submissions',
+        icon: FaBriefcase,
+        component: CareerSubmissions
     }
 ]

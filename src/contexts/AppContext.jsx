@@ -786,6 +786,42 @@ export const AppProvider = ({ children }) => {
         label: "Email Address", 
         validation: z.string().regex(EMPLOYEE_REGEX.EMAIL, "Invalid Email")
       },
+      interviewer_id: {
+        required: true,
+        inputType: 'autocomplete',
+        label: "Interviewer",
+        component: EmployeeOptionComponent,
+        options: [],
+        dependOn: [],
+        getOptions: getAutocompleteEmployeeListByBatchAndBranchService,
+        colSpan: 12
+      },
+      approver_id: {
+        required: true,
+        inputType: 'autocomplete',
+        label: "Approved By",
+        component: EmployeeOptionComponent,
+        options: [],
+        dependOn: [],
+        getOptions: getAutocompleteEmployeeListByBatchAndBranchService,
+        colSpan: 12
+      },
+      referral_type: {
+        inputType: 'select',
+        label: "Referral Type",
+        options: [],
+        dependOn: [],
+        getOptions: () => [
+          { id: "EMPLOYEE", name: "EMPLOYEE" },
+          { id: "VENDOR", name: "VENDOR" },
+        ],
+        colSpan: 6
+      },
+      referrer: {
+        inputType: 'text',
+        label: "Referrer ID/ Vendor Name",
+        colSpan: 6
+      },
     })
 
     const [joinUsRequestSubmissionFields, setJoinUsRequestSubmissionFields] = useState({
@@ -1567,6 +1603,92 @@ export const AppProvider = ({ children }) => {
         unsupportedTypeMessages: "Only PDF files are supported"
       }
     })
+    
+    const [contactSubmissionFields, setContactSubmissionFields] = useState({
+      first_name: {
+        inputType: 'text',
+        label: "First Name",
+      },
+      last_name: {
+        inputType: 'text',
+        label: "Last Name",
+      },
+      email: {
+        inputType: 'text',
+        label: "Email",
+      },
+      mobile: {
+        inputType: 'text',
+        label: "Phone",
+      },
+      message: {
+        inputType: 'textField',
+        colSpan:12,
+        label: "Message",
+      }
+    })
+
+    const [careerSubmissionFields, setCareerSubmissionFields] = useState({
+      first_name: {
+        inputType: 'text',
+        label: "First Name",
+      },
+      last_name: {
+        inputType: 'text',
+        label: "Last Name",
+      },
+      email: {
+        inputType: 'text',
+        label: "Email",
+      },
+      mobile: {
+        inputType: 'text',
+        label: "Phone",
+      },
+      dob: {
+        inputType: 'date',
+        label: "Date of Birth",
+      },
+      gender: {
+        inputType: 'select',
+        options: [],
+        label: "Gender",
+        getOptions: () => [
+          { id: 'Male', name: 'Male' },
+          { id: 'Female', name: 'Female' },
+        ],
+      },
+      address: {
+        inputType: 'textField',
+        label: "Address",
+        colSpan: 12
+      },
+      city: {
+        inputType: 'text',
+        label: "City",
+      },
+      state: {
+        inputType: 'text',
+        label: "State",
+      },
+      country: {
+        inputType: 'text',
+        label: "Country",
+      },
+      pincode: {
+        inputType: 'text',
+        label: "Pincode",
+      },
+      description: {
+        inputType: 'textField',
+        label: "Description",
+        colSpan: 12
+      },
+      cv_doc: {
+        inputType: 'file',
+        label: "Resume",
+      }
+    })
 
     ///////////////////////////////////////FORM FIELDS//////////////////////////////////////
 
@@ -1667,6 +1789,10 @@ export const AppProvider = ({ children }) => {
             setChangeProcessFields,
             applyResignationFields,
             setApplyResignationFields,
+            contactSubmissionFields,
+            setContactSubmissionFields,
+            careerSubmissionFields,
+            setCareerSubmissionFields,
             joinUsRequestFilter,
             setJoinUsRequestFilter,
             refreshFormUuid

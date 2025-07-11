@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { sidebarNavItems } from '@/constants'
 import { Tooltip } from 'react-tooltip'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { CgProfile } from "react-icons/cg";
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -55,9 +55,9 @@ const SideMenu = () => {
                 </>
             )})}
         </Box>
-        <Box className={`w-11 h-11 flex justify-center items-center rounded-full bg-[rgba(255,255,255,0.3)] text-3xl text-white hover:bg-[rgba(255,255,255,0.4)] cursor-pointer`}>
+        <Link to={'/dashboard/profile'} className={`w-11 h-11 flex justify-center items-center rounded-full bg-[rgba(255,255,255,0.3)] text-3xl text-white hover:bg-[rgba(255,255,255,0.4)] cursor-pointer`}>
             <CgProfile />
-        </Box>
+        </Link>
     </Box>
   )
 }

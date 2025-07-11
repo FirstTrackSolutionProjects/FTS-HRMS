@@ -587,6 +587,7 @@ const CustomForm = forwardRef(({ fields, setFields, handleSubmit = ()=>{}, exist
                 value={formData[key]}
                 onChange={handleFormDataChange}
                 name={key}
+                label={fields[key].label}
                 disabled={fields[key].disabled || viewMode}
                 onSearchChange={(value, key) => setSearchData((prev) => ({...prev, [key]: value}))}
                 renderSelected={(value) => {
