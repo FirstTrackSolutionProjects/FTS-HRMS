@@ -14,6 +14,7 @@ import ChangeBranchPopup from './ChangeBranchPopup'
 import ChangeDepartmentPopup from './ChangeDepartmentPopup'
 import ChangeDesignationPopup from './ChangeDesignationPopup'
 import ChangeProcessPopup from './ChangeProcessPopup'
+import ViewEditEmployeeProfile from './ViewEditEmployeeProfile'
 const ViewEmployees = () => {
     const { width } = useWidth()
     const { permissions, checkPermission } = useAuth()
@@ -33,6 +34,15 @@ const ViewEmployees = () => {
         const handleViewEditEmployeeDetailEvent = () => {
           setViewEditEmployeeDetailPopupOpen(false)
           // showAllEmployees()
+        }
+
+        const [viewEditEmployeeProfilePopupOpen, setViewEditEmployeeProfilePopupOpen] = useState(false)
+        const handleViewEditEmployeeProfilePopup = () => {
+          setViewEditEmployeeProfilePopupOpen((prev)=>!prev)
+        }
+        const handleViewEditEmployeeProfileEvent = () => {
+          setViewEditEmployeeProfilePopupOpen(false)
+          showAllEmployees()
         }
 
         const [changeBranchPopupOpen, setChangeBranchPopupOpen] = useState(false)
@@ -75,12 +85,14 @@ const ViewEmployees = () => {
         <>
         <Box className="flex flex-1 items-center h-full" gap={2}>
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleViewEditEmployeeDetailPopup} />}
+          {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleViewEditEmployeeProfilePopup} />}
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeBranchPopup} />}
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeDepartmentPopup} />}
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeDesignationPopup} />}
           {checkPermission(PERMISSIONS.UPDATE_ROLE) && <ViewIcon onClick={handleChangeProcessPopup} />}
         </Box>
         <ViewEditEmployeeDetails open={viewEditEmployeeDetailPopupOpen} onClose={handleViewEditEmployeeDetailPopup} onSubmit={handleViewEditEmployeeDetailEvent} employeeId={params?.id}  />
+        <ViewEditEmployeeProfile open={viewEditEmployeeProfilePopupOpen} onClose={handleViewEditEmployeeProfilePopup} onSubmit={handleViewEditEmployeeProfileEvent} employeeId={params?.id} />
         <ChangeBranchPopup open={changeBranchPopupOpen} onClose={handleChangeBranchPopup} onSubmit={handleChangeBranchEvent} employeeId={params?.id} />
         <ChangeDepartmentPopup open={changeDepartmentPopupOpen} onClose={handleChangeDepartmentPopup} onSubmit={handleChangeDepartmentEvent} employeeId={params?.id} />
         <ChangeDesignationPopup open={changeDesignationPopupOpen} onClose={handleChangeDesignationPopup} onSubmit={handleChangeDesignationEvent} employeeId={params?.id} />

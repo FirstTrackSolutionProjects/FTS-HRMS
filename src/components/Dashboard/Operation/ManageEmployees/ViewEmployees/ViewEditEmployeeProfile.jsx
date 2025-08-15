@@ -2,11 +2,12 @@ import ActionPopup from "@/components/CustomComponents/ActionPopup"
 import CustomButton from "@/components/CustomComponents/CustomButton"
 import CustomForm from "@/components/CustomComponents/CustomForm"
 import { useApp } from "@/contexts/AppContext"
+import updateEmployeeService from "@/services/employeeServices/updateEmployeeProfileService"
 import getEmployeeService from "@/services/getEmployeeService"
 import { useEffect, useRef, useState } from "react"
 import { toast } from "react-toastify"
 
-const ViewEditEmployeeDetails = ({
+const ViewEditEmployeeProfile = ({
     open, 
     onClose, 
     onSubmit, 
@@ -15,8 +16,8 @@ const ViewEditEmployeeDetails = ({
     if (!open) return;
     const employeeFormRef = useRef()
     const {
-        employeeFields,
-        setEmployeeFields,
+        employeeProfileFields,
+        setEmployeeProfileFields,
         refreshFormUuid
     } = useApp()
 
@@ -37,33 +38,38 @@ const ViewEditEmployeeDetails = ({
         getEmployee();
     },[])
 
-    const handleSubmit=()=>{
-        employeeFormRef?.current?.setLoadingState('Updating...');
-        console.log(employeeData)
-        employeeFormRef?.current?.setLoadingState(null);
+    const handleSubmit=async ()=>{
+        try{
+            employeeFormRef?.current?.setLoadingState('Updating...');
+            const updatedData = employeeFormRef?.current?.formData;
+            await updateEmployeeService(employeeId, updatedData);
+            toast.success("Employee Details Updated Successfully");
+            employeeFormRef?.current?.setLoadingState(null);
+        } catch (err) {
+            toast.error(err?.message || "Failed to update Employee Details")
+        }
     }
     return (
-        <ActionPopup open={open} onClose={onClose} title="View Employee" actions={[
+        <ActionPopup open={open} onClose={onClose} title="View/Edit Employee Profile" actions={[
             <CustomButton
-                title={'Close'}
-                variant="contained"
-                color="primary"
-                size="small"
-                onClick={onClose}
-                sx={{ marginTop: 2, width: '100%' }}
-              />
+                    title="Update Profile"
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    disabled={employeeFormRef?.current?.loadingState?true:false}
+                    onClick={()=>employeeFormRef?.current?.submitForm()}
+                />
           ]}>
             <CustomForm 
               ref={employeeFormRef} 
-              fields={employeeFields} 
-              setFields={setEmployeeFields} 
+              fields={employeeProfileFields} 
+              setFields={setEmployeeProfileFields} 
               handleSubmit={handleSubmit}
               existingData={employee}
-              viewMode
             />
             {/* <PayrollTable payrollFields={payrollFields} payrollData={payrollData} setPayrollData={setPayrollData} /> */}
           </ActionPopup>
     )
 }
 
-export default ViewEditEmployeeDetails
+export default ViewEditEmployeeProfile

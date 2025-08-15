@@ -134,6 +134,21 @@ export const AppProvider = ({ children }) => {
           inputType: 'date',
           label: "Date of Birth"
         },
+        marital_status: {
+          label: "Marital Status",
+          inputType: 'select',
+          options: [],
+          getOptions: () => ([
+            {
+              id: 'Single',
+              name: 'Single'
+            },
+            {
+              id: 'Married',
+              name: 'Married'
+            }
+          ])
+        },
         blood_group: {
           required: true,
           inputType: 'select',
@@ -279,7 +294,13 @@ export const AppProvider = ({ children }) => {
               name: "Post Graduation"
             }
           ]),
-          validation: z.number().int("Qualification is required")
+          validation: z.string({
+            required_error: "Qualification is required",
+            invalid_type_error: "Qualification must be a string"
+          })
+          .trim()
+          .min(1, "Qualification must be at least 1 character long")
+          .max(100, "Qualification must be at most 100 characters long")
         },
         department_id: { 
           required: true, 
@@ -912,6 +933,9 @@ export const AppProvider = ({ children }) => {
           required: true,
           inputType: 'number',
           label: "Age",
+          validation: z.coerce.number().int()
+          .min(18, "Age must be at least 18")
+          .max(80, "Age must be at most 80")
         },
         gender: {
           required: true,
@@ -1079,7 +1103,13 @@ export const AppProvider = ({ children }) => {
               name: "Post Graduation"
             }
           ]),
-          validation: z.number().int("Qualification is required")
+          validation: z.string({
+            required_error: "Qualification is required",
+            invalid_type_error: "Qualification must be a string"
+          })
+          .trim()
+          .min(1, "Qualification must be at least 1 character long")
+          .max(100, "Qualification must be at most 100 characters long")
         },
         aadhaar_doc: {
           required: false,
@@ -1690,6 +1720,357 @@ export const AppProvider = ({ children }) => {
       }
     })
 
+    const [employeeProfileFields, setEmployeeProfileFields] = useState({
+      photo_doc: { 
+          required: false, 
+          inputType: 'photo', 
+          label: "Profile Photo",
+          key: `employee/${employeeId}/onboarding-${formUuid}/photo`,
+          allowedTypes: ['image/jpeg', 'image/png'],
+          unsupportedTypeMessages: "Only PNG and JPG files are supported"
+        },
+        first_name: { 
+          required: true, 
+          inputType: 'text', 
+          label: "First Name"
+        },
+        last_name: { 
+          required: false, 
+          inputType: 'text', 
+          label: "Last Name" 
+        },
+        mobile: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Mobile Number", 
+          validation: z.string().regex(/\d{10}/, "Invalid Mobile Number") 
+        },
+        email: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Email Address", 
+          validation: z.string().email("Invalid Email") 
+        },
+        mothers_name: {
+          required: true,
+          inputType: 'text',
+          label: "Mother's Name",
+        },
+        fathers_name: {
+          required: true,
+          inputType: 'text',
+          label: "Father's Name",
+        },
+        guardian_name: {
+          inputType: 'text',
+          label: "Guardian's Name",
+        },
+        guardian_relation: {
+          inputType: 'select',
+          label: "Guardian's Relation",
+          options: [],
+          getOptions: () => ([
+            { id: "Brother", name: "Brother" },
+            { id: "Sister", name: "Sister" },
+            { id: "Son", name: "Son" },
+            { id: "Daughter", name: "Daughter" },
+            { id: "Grandfather", name: "Grandfather" },
+            { id: "Grandmother", name: "Grandmother" },
+            { id: "Uncle", name: "Uncle" },
+            { id: "Aunt", name: "Aunt" },
+            { id: "Cousin", name: "Cousin" },
+            { id: "Nephew", name: "Nephew" },
+            { id: "Niece", name: "Niece" },
+            { id: "Father-in-law", name: "Father-in-law" },
+            { id: "Mother-in-law", name: "Mother-in-law" },
+            { id: "Brother-in-law", name: "Brother-in-law" },
+            { id: "Sister-in-law", name: "Sister-in-law" },
+            { id: "Son-in-law", name: "Son-in-law" },
+            { id: "Daughter-in-law", name: "Daughter-in-law" },
+            { id: "Spouse", name: "Spouse" },
+            { id: "Husband", name: "Husband" },
+            { id: "Wife", name: "Wife" },
+            { id: "Stepfather", name: "Stepfather" },
+            { id: "Stepmother", name: "Stepmother" },
+            { id: "Stepbrother", name: "Stepbrother" },
+            { id: "Stepsister", name: "Stepsister" },
+            { id: "Guardian", name: "Guardian" },
+            { id: "Other", name: "Other" }
+          ])
+        },
+        parents_guardian_mobile: {
+          required: true,
+          inputType: 'text',
+          label: "Parents/Guardian's Mobile",
+          validation: z.string().regex(/\d{10}/, "Invalid Mobile Number") 
+        },
+        age: {
+          required: true,
+          inputType: 'number',
+          label: "Age",
+          validation: z.coerce.number().int().min(18, "Age must be at least 18").max(80, "Age must be at most 80")
+        },
+        gender: {
+          required: true,
+          inputType: 'select',
+          label: "Gender",
+          options: [],
+          getOptions: () => ([
+            {
+              id: 'Male',
+              name: 'Male',
+            },
+            {
+              id: 'Female',
+              name: 'Female'
+            }
+          ])
+        },
+        dob: {
+          required: true,
+          inputType: 'date',
+          label: "Date of Birth"
+        },
+        marital_status: {
+          label: "Marital Status",
+          inputType: 'select',
+          options: [],
+          getOptions: () => ([
+            { id: "Single", name: "Single" },
+            { id: "Married", name: "Married" }
+          ])
+        },
+        blood_group: {
+          required: true,
+          inputType: 'select',
+          label: "Blood Group",
+          options: [],
+          getOptions: () => ([
+            {
+              id: 'A+',
+              name: 'A+'
+            },
+            {
+              id: 'A-',
+              name: 'A-'
+            },
+            {
+              id: 'B+',
+              name: 'B+'
+            },
+            {
+              id: 'B-',
+              name: 'B-'
+            },
+            {
+              id: 'AB+',
+              name: 'AB+'
+            },
+            {
+              id: 'AB-',
+              name: 'AB-'
+            },
+            {
+              id: 'O+',
+              name: 'O+'
+            },
+            {
+              id: 'O-',
+              name: 'O-'
+            }
+          ])
+        },
+        landmark: {
+          required: true,
+          inputType: 'text',
+          label: "Landmark"
+        },
+        address: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Address" 
+        },
+        city: { 
+          required: true, 
+          inputType: 'text', 
+          label: "City" 
+        },
+        state: { 
+          required: true, 
+          inputType: 'text', 
+          label: "State" 
+        },
+        pincode: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Pincode", 
+          validation: z.string().regex(/\d{6}/, "Invalid Pincode") 
+        },
+        country: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Country" 
+        },
+        permanent_address_landmark: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Address Landmark",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        permanent_street_address: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Street Address",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        permanent_address_city: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Address City",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        permanent_address_state: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Address State",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        permanent_address_country: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Address Country",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        permanent_address_postal_code: {
+          required: true,
+          inputType: 'text',
+          label: "Permanent Address Pincode",
+          conditions: (formData) => !formData.is_permanent_address_same
+        },
+        is_permanent_address_same: {
+          required: true,
+          inputType: 'switch',
+          label: "Is Permanent Address Same as Current Address",
+          colSpan: 12,
+          validation: z.coerce.boolean({
+            required_error: "Permanent Address Same is required",
+            invalid_type_error: "Permanent Address Same must be a boolean"
+          })
+        },
+        aadhaar: { 
+          required: true, 
+          inputType: 'text', 
+          label: "Aadhaar Number", 
+          validation: z.string().regex(/\d{12}/, "Invalid Aadhaar Number")
+        },
+        pan: { 
+          required: true, 
+          inputType: 'text', 
+          label: "PAN Number", 
+          validation: z.string().regex(/[A-Z]{5}\d{4}[A-Z]{1}/, "Invalid PAN Number") 
+        },
+        qualification: { 
+          required: true, 
+          inputType: 'select', 
+          label: "Qualification",
+          options: [],
+          dependOn: null,
+          getOptions: () => ([
+            {
+              id: "12th",
+              name: "12th"
+            },
+            {
+              id: "Graduation",
+              name: "Graduation"
+            },
+            {
+              id: "Post Graduation",
+              name: "Post Graduation"
+            }
+          ]),
+          validation: z.string({
+            required_error: "Qualification is required",
+            invalid_type_error: "Qualification must be a string"
+          })
+          .trim()
+          .min(1, "Qualification must be at least 1 character long")
+          .max(100, "Qualification must be at most 100 characters long")
+        },
+        aadhaar_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Aadhaar Upload",
+          key: `employee/${employeeId}/onboarding-${formUuid}/aadhaar_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        pan_doc: {
+          required: false,
+          inputType: 'file',
+          label: "PAN Upload",
+          key: `employee/${employeeId}/onboarding-${formUuid}/pan_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        secondary_education_doc : {
+          required: false,
+          inputType: 'file',
+          label: "Secondary Education Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/secondary_education_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        intermediate_education_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Intermediate Education Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/intermediate_education_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        graduation_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Graduation Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/graduation_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        post_graduation_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Post Graduation Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/post_graduation_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        passbook_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Passbook Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/passbook_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        experience_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Experience or Relieve Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/experience_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+        last_three_month_salary_doc: {
+          required: false,
+          inputType: 'file',
+          label: "Last Three Month Salary Document",
+          key: `employee/${employeeId}/onboarding-${formUuid}/last_three_month_salary_doc`,
+          allowedTypes: ['application/pdf'],
+          unsupportedTypeMessages: "Only PDF files are supported"
+        },
+    })
+
     ///////////////////////////////////////FORM FIELDS//////////////////////////////////////
 
     /////////////////////////////////////FILTER FIELDS//////////////////////////////////////
@@ -1795,6 +2176,8 @@ export const AppProvider = ({ children }) => {
             setCareerSubmissionFields,
             joinUsRequestFilter,
             setJoinUsRequestFilter,
+            employeeProfileFields,
+            setEmployeeProfileFields,
             refreshFormUuid
         }}>
             {children}
