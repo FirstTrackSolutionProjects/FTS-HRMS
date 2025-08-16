@@ -1,11 +1,12 @@
 import { Helmet } from "react-helmet"
-import { Box, TextField, Button, Typography } from '@mui/material'
+import { Box, TextField, Button, Typography, Link as MuiLink } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useAuth } from '@/contexts/AuthContext'
 import { Link, useNavigate } from 'react-router-dom'
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import { useWidth } from '@/contexts/WidthContext'
+import ResetPasswordModal from '@/components/Auth/ResetPasswordModal'
 const API_URL = import.meta.env.VITE_APP_API_URL
 
 const SignInForm = () => {
@@ -16,6 +17,7 @@ const SignInForm = () => {
     email: '',
     password: '',
   })
+  const [resetOpen, setResetOpen] = useState(false);
   useEffect(()=>{
     if(isAuthenticated) navigate('/contact-us')
   },[isAuthenticated])
@@ -137,15 +139,19 @@ const SignInForm = () => {
     >
       Login
     </Button>
+    <MuiLink component="button" type="button" underline="hover" sx={{ mt: 1, color: 'white', fontSize: 14 }} onClick={()=>setResetOpen(true)}>
+      Forgot Password?
+    </MuiLink>
       </Box>
     </Box>
+    <ResetPasswordModal open={resetOpen} onClose={()=>setResetOpen(false)} />
   </Box>
   )
 }
 
 
 const SignIn = () => {
-  const { isAuthenticated, is_superadmin } = useAuth()
+  const { isAuthenticated } = useAuth()
   const navigate = useNavigate()
   useEffect(()=>{
     if(isAuthenticated){
