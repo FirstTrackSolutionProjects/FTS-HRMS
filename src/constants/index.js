@@ -84,7 +84,7 @@ export const joinUsRequestStatuses = Object.freeze({
 export const sidebarNavItems = Object.freeze([
     {
         label: 'Dashboard',
-        to: '/home',
+        to: '/',
         icon: MdDashboardCustomize,
         component: Home,
         permissions: []
