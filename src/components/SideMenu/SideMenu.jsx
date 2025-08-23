@@ -11,7 +11,7 @@ const SideMenu = () => {
     const {checkPermission, is_superadmin} = useAuth()
   return (
     <Box className="h-screen w-full flex flex-col space-y-2 items-center" gap={4}>
-        <Box component={'img'} className='w-16 h-16 rounded-full p-2' src='/logo.jpg' />
+        <Link to={'/'}><Box component={'img'} className='w-16 h-16 rounded-full p-2' src='/logo.jpg' /></Link>
         <Box 
             className="h-[calc(100vh-210px)] w-full flex flex-col items-center overflow-y-auto overflow-x-hidden" 
             gap={2}
