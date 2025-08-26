@@ -2071,6 +2071,15 @@ export const AppProvider = ({ children }) => {
         },
     })
 
+    const [employeeJoiningFields, setEmployeeJoiningFields] = useState({
+      joining_date: {
+        required: true,
+        inputType: 'date',
+        label: "Joining Date",
+        colSpan: 12
+      }
+    })
+
     ///////////////////////////////////////FORM FIELDS//////////////////////////////////////
 
     /////////////////////////////////////FILTER FIELDS//////////////////////////////////////
@@ -2178,6 +2187,8 @@ export const AppProvider = ({ children }) => {
             setJoinUsRequestFilter,
             employeeProfileFields,
             setEmployeeProfileFields,
+            employeeJoiningFields,
+            setEmployeeJoiningFields,
             refreshFormUuid
         }}>
             {children}
