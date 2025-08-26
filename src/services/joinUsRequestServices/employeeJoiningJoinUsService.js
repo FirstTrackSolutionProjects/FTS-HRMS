@@ -1,14 +1,16 @@
 
 const API_URL = import.meta.env.VITE_APP_API_URL
 
-const employeeJoiningJoinUsService = async (requestId) => {
+const employeeJoiningJoinUsService = async (requestId, formData) => {
     try {
         const response = await fetch(`${API_URL}/onboarding/join-us-requests/employee-joining/${requestId}`, {
-            method: 'PATCH',
+            method: 'POST',
             headers: {
                 'Authorization': localStorage.getItem('token'),
+                'Content-Type': 'application/json',
                 'Accept': 'application/json',
-            }
+            },
+            body: JSON.stringify(formData)
         });     
         let data;
         try {

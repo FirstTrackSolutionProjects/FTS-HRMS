@@ -1,14 +1,20 @@
 import { Box, Typography } from "@mui/material";
-import Popup from "@/components/CustomComponents/Popup";
 import CustomButton from "@/components/CustomComponents/CustomButton";
 import { toast } from "react-toastify";
 import employeeJoiningJoinUsService from "@/services/joinUsRequestServices/employeeJoiningJoinUsService";
+import { useRef } from "react";
+import { useApp } from "@/contexts/AppContext";
+import ActionPopup from "@/components/CustomComponents/ActionPopup";
+import CustomForm from "@/components/CustomComponents/CustomForm";
 
 const EmployeeJoiningPopup = ({ open, onClose, onSubmit, requestId }) => {
     if (!open) return null;
+    const formRef = useRef(null);
+    const { employeeJoiningFields, setEmployeeJoiningFields} = useApp()
     const handleSubmit = async () => {
         try {
-            await employeeJoiningJoinUsService(requestId);
+            const formData = formRef?.current?.formData;
+            await employeeJoiningJoinUsService(requestId, formData);
             toast.success("Employee Joined successfully!");
             onSubmit();
         } catch (error) {
@@ -17,22 +23,30 @@ const EmployeeJoiningPopup = ({ open, onClose, onSubmit, requestId }) => {
     };
 
     return (
-        <Popup open={open} close={onClose} title="Employee Joining Confirmation">
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                <Typography variant="body1">
-                    This action will create the employee account. This action should only be done on employee's first day reporting.
-                </Typography>
-
+        <ActionPopup
+            open={open}
+            onClose={onClose}
+            title="Employee Joining"
+            actions={[
                 <CustomButton
-                    title="Confirm Joining"
+                    title="Create Account"
                     variant="contained"
                     color="primary"
                     size="small"
-                    onClick={handleSubmit}
-                    sx={{ width: 300 }}
+                    disabled={formRef?.current?.loadingState?true:false}
+                    onClick={()=>formRef?.current?.submitForm()}
+                />
+            ]}
+        >
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <CustomForm
+                    ref={formRef}
+                    fields={employeeJoiningFields}
+                    setFields={setEmployeeJoiningFields}
+                    handleSubmit={handleSubmit}
                 />
             </Box>
-        </Popup>
+        </ActionPopup>
     );
 };
 
