@@ -4,7 +4,7 @@ import BasicProfileBanner from './BasicProfileBanner'
 
 const Home = () => {
   return (
-    <div className='w-full h-screen'>
+    <div className='w-full h-screenm m-4 gap-2'>
       <BasicProfileBanner />
       <AttendanceButton />
     </div>
